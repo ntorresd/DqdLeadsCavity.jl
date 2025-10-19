@@ -1,0 +1,10 @@
+# This file is machine-generated - editing it directly is not advised
+
+julia_version = "1.12.1"
+manifest_format = "2.0"
+project_hash = "35375ef959eb5618b6c5dcaa2fd4cc8855f50a42"
+
+[[deps.DqdLeadsCavity]]
+path = "."
+uuid = "9c663722-20cf-451c-a5d1-0d21e07208d9"
+version = "1.0.0-DEV"
