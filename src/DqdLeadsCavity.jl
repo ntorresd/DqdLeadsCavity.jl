@@ -1,14 +1,9 @@
 module DqdLeadsCavity
 
 # Imports
-using QuantumToolbox
+using QuantumToolbox, LinearAlgebra
 
 # Structures
-export Dqd, Leads, DqdLeads
-export Cavity
-
-# Functions
-export Ω, θ, OnsiteEnergies
 
 include("structs/dqd.jl")
 include("structs/leads.jl")

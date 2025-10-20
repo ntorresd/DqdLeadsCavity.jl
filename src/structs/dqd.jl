@@ -1,3 +1,9 @@
+export Dqd
+export get_Ω, get_θ, get_onsite_energies, get_eigen_energies
+export build_dqd_basis_LR, build_dqd_ladder_ops_LR, build_dqd_number_ops_LR
+export build_dqd_basis_ge, build_dqd_ladder_ops_ge
+
+# --- Dqd structure ---
 mutable struct Dqd
     Δϵ::Real
     ϵ_avg::Real
@@ -24,16 +30,130 @@ function Base.show(io::IO, dqd::Dqd)
     )
 end
 
-function Ω(dqd::Dqd)
+# --- Derived parameters ---
+"""
+DQD energy split in the g-e basis
+"""
+function get_Ω(dqd::Dqd)
     return sqrt(4 * dqd.tc^2 + dqd.Δϵ^2)
 end
 
-function θ(dqd::Dqd)
-    return atan(2. * dqd.tc / dqd.Δϵ) / 2.
+"""
+DQD mixing angle in the g-e basis
+"""
+function get_θ(dqd::Dqd)
+    θ = atan(- 2. * dqd.tc / dqd.Δϵ) / 2.
+    return θ
 end
 
-function OnsiteEnergies(dqd::Dqd)
+"""
+DQD on-site energies
+"""
+function get_onsite_energies(dqd::Dqd)
     ϵL = dqd.ϵ_avg + dqd.Δϵ / 2.
     ϵR = dqd.ϵ_avg - dqd.Δϵ / 2.
     return ϵL, ϵR
+end
+
+"""
+DQD eigen-energies
+"""
+function get_eigen_energies(dqd::Dqd)
+    Ω = get_Ω(dqd)
+    ϵg = dqd.ϵ_avg - Ω / 2.
+    ϵe = dqd.ϵ_avg + Ω / 2.
+    return ϵg, ϵe
+end
+
+# --- LR Basis ---
+
+"""
+Build DQD (ket) basis in the left-right basis
+"""
+function build_dqd_basis_LR(dqd::Dqd)
+    dim = get_dim(dqd)
+    if dqd.blockade
+        # DQD basis
+        ket_0 = basis(dim, 0)
+        ket_L = basis(dim, 1)
+        ket_R = basis(dim, 2)
+
+        return ket_0, ket_L, ket_R
+    else
+        # Dimensions
+        dims = (2, 2)
+
+        # DQD basis
+        ket_0 = fock(dim, 0, dims = dims)  # |0,0⟩
+        ket_L = fock(dim, 1, dims = dims)   # |0,1⟩
+        ket_R = fock(dim, 2, dims = dims)   # |1,0⟩
+        ket_D = fock(dim, 3, dims = dims)     # |1,1⟩
+
+        return ket_0, ket_L, ket_R, ket_D
+    end
+end
+
+"""
+Build DQD ladder operators in the L-R basis
+"""
+function build_dqd_ladder_ops_LR(dqd::Dqd)
+    if dqd.blockade
+        ket_0, ket_L, ket_R = build_dqd_basis_LR(dqd)
+        cL = ket_0 * ket_L'
+        cR = ket_0 * ket_R'
+    else
+        cL = fdestroy(2, 2)
+        cR = fdestroy(2, 1)
+    end
+
+    return cL, cR
+end
+
+"""
+Build DQD number operators in the LR basis
+"""
+function build_dqd_number_ops_LR(dqd::Dqd)
+    cL, cR = build_dqd_ladder_ops_LR(dqd)
+
+    nL = cL' * cL
+    nR = cR' * cR
+    nD = nL * nR
+
+    return nL, nR, nD
+end
+
+# --- g-e basis ---
+
+"""
+Build DQD basis in the g-e basis
+"""
+function build_dqd_basis_ge(dqd::Dqd)
+    dqd.blockade || throw(
+        ArgumentError(
+            "DQD g-e basis representation is not supported for dqd.blockade=$(dqd.blockade)"
+        ),
+    )
+    ket_0, ket_L, ket_R = build_dqd_basis_LR(dqd)
+    θ = get_θ(dqd)
+
+    ket_g = cos(θ/2) * ket_L - sin(θ/2) * ket_R
+    ket_e = sin(θ/2) * ket_L + cos(θ/2) * ket_R
+
+    return ket_0, ket_g, ket_e
+end
+
+"""
+Build DQD ladder operators in the g-e basis
+"""
+function build_dqd_ladder_ops_ge(dqd::Dqd)
+    # Parameters
+    θ = get_θ(dqd)
+
+    # Operators
+    cL, cR = build_dqd_ladder_ops_LR(dqd)
+
+    cg = cos(θ/2) * cL - sin(θ/2) * cR
+    ce = sin(θ/2) * cL + cos(θ/2) * cR
+
+    return cg, ce
 end
