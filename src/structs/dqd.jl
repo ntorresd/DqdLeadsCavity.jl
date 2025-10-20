@@ -1,7 +1,7 @@
 export Dqd
 export get_Ω, get_θ, get_onsite_energies, get_eigen_energies
 export build_dqd_basis_LR, build_dqd_ladder_ops_LR, build_dqd_number_ops_LR
-export build_dqd_basis_ge, build_dqd_ladder_ops_ge
+export build_dqd_basis_ge
 
 # --- Dqd structure ---
 mutable struct Dqd
@@ -42,7 +42,7 @@ end
 DQD mixing angle in the g-e basis
 """
 function get_θ(dqd::Dqd)
-    θ = atan(- 2. * dqd.tc / dqd.Δϵ) / 2.
+    θ = acos(- dqd.Δϵ / get_Ω(dqd))
     return θ
 end
 
@@ -142,18 +142,3 @@ function build_dqd_basis_ge(dqd::Dqd)
     return ket_0, ket_g, ket_e
 end
 
-"""
-Build DQD ladder operators in the g-e basis
-"""
-function build_dqd_ladder_ops_ge(dqd::Dqd)
-    # Parameters
-    θ = get_θ(dqd)
-
-    # Operators
-    cL, cR = build_dqd_ladder_ops_LR(dqd)
-
-    cg = cos(θ/2) * cL - sin(θ/2) * cR
-    ce = sin(θ/2) * cL + cos(θ/2) * cR
-
-    return cg, ce
-end

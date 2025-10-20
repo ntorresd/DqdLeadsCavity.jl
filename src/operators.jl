@@ -20,8 +20,18 @@ function build_H_dqd_LR(dqd::Dqd)
     return H
 end
 
+
 """
-Build DQD Hamiltonian in the g-e basis
+Build σz in the g-e parametrization
+"""
+function build_σz_ge(dqd::Dqd)
+    ket_0, ket_g, ket_e = build_dqd_basis_ge(dqd)
+    σz = ket_e * ket_e' - ket_g * ket_g'
+    return σz
+end
+
+"""
+Build DQD Hamiltonian in the g-e parametrization
 """
 function build_H_dqd_ge(dqd::Dqd)
     dqd.blockade || throw(
@@ -34,12 +44,11 @@ function build_H_dqd_ge(dqd::Dqd)
     Ω = get_Ω(dqd)
 
     # Operators
-    cg, ce = build_dqd_ladder_ops_ge(dqd)
-    σz = ce' * ce - cg' * cg
     ## Identity with zero in the first entry (|0><0|)
-    Id_ge = id_no_vacuum(dim)
+    id_ge = id_no_vacuum(dim)
+    σz_ge = build_σz_ge(dqd)
 
-    H_dqd = Ω * σz / 2. + dqd.ϵ_avg * Id_ge
+    H_dqd = Ω * σz_ge / 2. + dqd.ϵ_avg * id_ge
     return H_dqd
 end
 function build_H_dqd_ge(dqd::Dqd, cavity::Cavity)
@@ -53,11 +62,10 @@ function build_H_dqd_ge(dqd::Dqd, cavity::Cavity)
     Δd = get_Δd(dqd, cavity)
 
     # Operators
-    cg, ce = build_dqd_ladder_ops_ge(dqd)
-    σz = ce' * ce - cg' * cg
     ## Identity with zero in the first entry (|0><0|)
-    Id_ge = Id_ge = id_no_vacuum(dim)
+    id_ge = id_no_vacuum(dim)
+    σz_ge = build_σz_ge(dqd)
 
-    H_dqd = Δd * σz / 2. + dqd.ϵ_avg * Id_ge
+    H_dqd = Δd * σz_ge / 2. + dqd.ϵ_avg * id_ge
     return H_dqd
 end

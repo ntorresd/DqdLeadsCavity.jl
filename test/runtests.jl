@@ -33,3 +33,9 @@ end
     @test get_θ(dqd_leads.dqd) == get_θ(dqd)
     @test get_Δd(dqd, cavity) == get_Ω(dqd)
 end
+
+@testset "Test DQD Hamiltonian in the g-e basis" begin
+    dqd = Dqd(0.5, 0.1, 1.)
+    
+    @test isapprox(build_H_dqd_ge(dqd).data, build_H_dqd_LR(dqd).data)
+end
