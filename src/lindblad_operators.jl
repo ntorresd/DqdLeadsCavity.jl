@@ -1,7 +1,7 @@
 export build_L_ops_local_LR, build_L_ops_semilocal_LR
 export build_L_ops_local_ge
 
-"""
+@doc raw"""
 Build Lindblad operators corresponding to the local LME evaluating
 the fermi distributions at the corresponding on-site energies.
 """
@@ -27,7 +27,7 @@ function build_L_ops_local_LR(dqd_leads::DqdLeads)
     return L_ops
 end
 
-"""
+@doc raw"""
 Build Lindblad operators corresponding to the semi-local LME evaluating
 the fermi distributions at the corresponding on-site energies.
 """
@@ -66,7 +66,7 @@ function build_L_ops_semilocal_LR(dqd_leads::DqdLeads)
     return L_ops
 end
 
-"""
+@doc raw"""
 Build Lindblad operators corresponding to the local LME evaluating
 the eigen-energies of the DQD (g-e)
 """

@@ -1,6 +1,6 @@
 export build_H_dqd_LR, build_H_dqd_ge
 
-"""
+@doc raw"""
 Build DQD Hamiltonian in the L-R basis
 """
 function build_H_dqd_LR(dqd::Dqd)
@@ -21,7 +21,7 @@ function build_H_dqd_LR(dqd::Dqd)
 end
 
 
-"""
+@doc raw"""
 Build σz in the g-e parametrization
 """
 function build_σz_ge(dqd::Dqd)
@@ -30,7 +30,7 @@ function build_σz_ge(dqd::Dqd)
     return σz
 end
 
-"""
+@doc raw"""
 Build DQD Hamiltonian in the g-e parametrization
 """
 function build_H_dqd_ge(dqd::Dqd)

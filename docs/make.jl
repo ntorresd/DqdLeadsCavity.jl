@@ -12,6 +12,7 @@ makedocs(
     format   = Documenter.HTML(; prettyurls = get(ENV, "CI", "false") == "true"),
     pages    = [
         "Home" => "index.md",
+        "API" => "api.md"
     ],
     checkdocs = :exports,
 )

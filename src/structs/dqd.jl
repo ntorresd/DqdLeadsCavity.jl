@@ -31,14 +31,14 @@ function Base.show(io::IO, dqd::Dqd)
 end
 
 # --- Derived parameters ---
-"""
+@doc raw"""
 DQD energy split in the g-e basis
 """
 function get_Ω(dqd::Dqd)
     return sqrt(4 * dqd.tc^2 + dqd.Δϵ^2)
 end
 
-"""
+@doc raw"""
 DQD mixing angle in the g-e basis
 """
 function get_θ(dqd::Dqd)
@@ -46,7 +46,7 @@ function get_θ(dqd::Dqd)
     return θ
 end
 
-"""
+@doc raw"""
 DQD on-site energies
 """
 function get_onsite_energies(dqd::Dqd)
@@ -55,7 +55,7 @@ function get_onsite_energies(dqd::Dqd)
     return ϵL, ϵR
 end
 
-"""
+@doc raw"""
 DQD eigen-energies
 """
 function get_eigen_energies(dqd::Dqd)
@@ -67,7 +67,7 @@ end
 
 # --- LR Basis ---
 
-"""
+@doc raw"""
 Build DQD L-R ket basis
 """
 function build_dqd_basis_LR(dqd::Dqd)
@@ -93,7 +93,7 @@ function build_dqd_basis_LR(dqd::Dqd)
     end
 end
 
-"""
+@doc raw"""
 Build DQD L-R ladder operators
 """
 function build_dqd_ladder_ops_LR(dqd::Dqd)
@@ -109,7 +109,7 @@ function build_dqd_ladder_ops_LR(dqd::Dqd)
     return cL, cR
 end
 
-"""
+@doc raw"""
 Build DQD number operators in the LR basis
 """
 function build_dqd_number_ops_LR(dqd::Dqd)
@@ -124,7 +124,7 @@ end
 
 # --- g-e basis ---
 
-"""
+@doc raw"""
 Build DQD g-e ket basis
 """
 function build_dqd_basis_ge(dqd::Dqd)
@@ -142,7 +142,7 @@ function build_dqd_basis_ge(dqd::Dqd)
     return ket_0, ket_g, ket_e
 end
 
-"""
+@doc raw"""
 Build DQD g-e ladder operators
 """
 function build_dqd_ladder_ops_ge(dqd::Dqd)
