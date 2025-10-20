@@ -11,7 +11,8 @@ include("structs/dqd_leads.jl")
 include("structs/cavity.jl")
 
 # Functions
-include("operators.jl")
+include("hamiltonians.jl")
+include("lindblad_operators.jl")
 include("utilities.jl")
 
 end

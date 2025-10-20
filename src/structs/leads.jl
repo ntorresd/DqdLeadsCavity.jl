@@ -1,4 +1,5 @@
 export Leads
+export get_chemical_potentials
 
 mutable struct Leads
     TL::Real
@@ -18,4 +19,11 @@ function Base.show(io::IO, leads::Leads)
         "Δμ = $(leads.Δμ)\n",
         "μ_avg = $(leads.μ_avg)\n"
     )
+end
+
+function get_chemical_potentials(leads::Leads)
+    μL = leads.μ_avg + leads.Δμ
+    μR = leads.μ_avg - leads.Δμ
+
+    return μL, μR
 end

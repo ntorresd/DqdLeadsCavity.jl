@@ -1,7 +1,7 @@
 export Dqd
 export get_Ω, get_θ, get_onsite_energies, get_eigen_energies
 export build_dqd_basis_LR, build_dqd_ladder_ops_LR, build_dqd_number_ops_LR
-export build_dqd_basis_ge
+export build_dqd_basis_ge, build_dqd_ladder_ops_ge
 
 # --- Dqd structure ---
 mutable struct Dqd
@@ -68,7 +68,7 @@ end
 # --- LR Basis ---
 
 """
-Build DQD (ket) basis in the left-right basis
+Build DQD L-R ket basis
 """
 function build_dqd_basis_LR(dqd::Dqd)
     dim = get_dim(dqd)
@@ -94,7 +94,7 @@ function build_dqd_basis_LR(dqd::Dqd)
 end
 
 """
-Build DQD ladder operators in the L-R basis
+Build DQD L-R ladder operators
 """
 function build_dqd_ladder_ops_LR(dqd::Dqd)
     if dqd.blockade
@@ -125,7 +125,7 @@ end
 # --- g-e basis ---
 
 """
-Build DQD basis in the g-e basis
+Build DQD g-e ket basis
 """
 function build_dqd_basis_ge(dqd::Dqd)
     dqd.blockade || throw(
@@ -142,3 +142,13 @@ function build_dqd_basis_ge(dqd::Dqd)
     return ket_0, ket_g, ket_e
 end
 
+"""
+Build DQD g-e ladder operators
+"""
+function build_dqd_ladder_ops_ge(dqd::Dqd)
+    ket_0, ket_g, ket_e = build_dqd_basis_ge(dqd)
+    cg = ket_0 * ket_g'
+    ce = ket_0 * ket_e'
+
+    return cg, ce
+end

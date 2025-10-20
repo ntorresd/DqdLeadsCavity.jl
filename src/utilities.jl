@@ -1,5 +1,18 @@
+export fermi
 export get_Δd, get_dim
 export id_no_vacuum
+
+"""
+Fermi distribution
+
+# Arguments
+- `ϵ::Real`: Energy
+- `μ::Real`: Chemical potential
+- `T::Real`: Temperature
+"""
+function fermi(ϵ, μ, T)
+    return 1/(1 + exp((ϵ - μ) / T))
+end
 
 """
 Detuning between the DQD and cavity drive
