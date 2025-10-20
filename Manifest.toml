@@ -2,7 +2,7 @@
 
 julia_version = "1.12.1"
 manifest_format = "2.0"
-project_hash = "ae5f9c61b8128b51a556470ff14d099aee34e4c3"
+project_hash = "290400d62ef07877454e12626a0cbf459de70eb4"
 
 [[deps.ADTypes]]
 git-tree-sha1 = "27cecae79e5cc9935255f90c53bb831cc3c870d7"
@@ -421,6 +421,7 @@ uuid = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 version = "1.6.0"
 
 [[deps.DqdLeadsCavity]]
+deps = ["QuantumToolbox"]
 path = "."
 uuid = "9c663722-20cf-451c-a5d1-0d21e07208d9"
 version = "1.0.0-DEV"
