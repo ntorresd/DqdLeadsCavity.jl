@@ -1,6 +1,7 @@
 export fermi
 export get_Δd, get_dim
 export id_no_vacuum
+export context_LR
 
 @doc raw"""
 Fermi distribution
@@ -34,4 +35,16 @@ Get object dimension
 function get_dim(dqd::Dqd)
     dim = dqd.blockade ? 3 : 4
     return dim
+end
+
+@doc raw"""
+Helper function to gather L-R labelled quantities
+"""
+@inline function context_LR(dqd_leads::DqdLeads)
+    ϵL, ϵR = get_onsite_energies(dqd_leads.dqd)
+    μL, μR = get_chemical_potentials(dqd_leads.leads)
+    (; ϵL, ϵR, μL, μR,
+       ΓL = dqd_leads.ΓL, ΓR = dqd_leads.ΓR,
+       TL = dqd_leads.leads.TL, TR = dqd_leads.leads.TR
+    )
 end
