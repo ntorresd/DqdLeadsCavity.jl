@@ -41,10 +41,20 @@ end
 Helper function to gather L-R labelled quantities
 """
 @inline function context_LR(dqd_leads::DqdLeads)
-    ϵL, ϵR = get_onsite_energies(dqd_leads.dqd)
-    μL, μR = get_chemical_potentials(dqd_leads.leads)
+    ϵL, ϵR = get_onsite_energies(dqd_leads)
+    μL, μR = get_chemical_potentials(dqd_leads)
     (; ϵL, ϵR, μL, μR,
        ΓL = dqd_leads.ΓL, ΓR = dqd_leads.ΓR,
        TL = dqd_leads.leads.TL, TR = dqd_leads.leads.TR
     )
+end
+
+@doc raw"""
+Helper function to gather g-e labelled quantities
+"""
+@inline function context_ge(dqd_leads::DqdLeads)
+    ϵg, ϵe = get_eigen_energies(dqd_leads.dqd)
+    ΓLg, ΓLe, ΓRg, ΓRe = get_transition_rates_ge(dqd_leads)
+    fLg, fLe, fRg, fRe = get_fermi_ge(dqd_leads)
+    (; ϵg, ϵe, ΓLg, ΓLe, ΓRg, ΓRe, fLg, fLe, fRg, fRe)
 end
