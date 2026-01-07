@@ -1,6 +1,7 @@
 export Dqd
 export get_Ω, get_θ, get_onsite_energies, get_eigen_energies
-export build_dqd_basis_LR, build_dqd_ladder_ops_LR, build_dqd_number_ops_LR
+export build_dqd_basis_LR, build_dqd_ladder_ops_LR
+export build_dqd_number_ops_LR, build_dqd_number_ops_ge, build_dqd_number_op
 export build_dqd_basis_ge, build_dqd_ladder_ops_ge
 
 # --- Dqd structure ---
@@ -122,6 +123,27 @@ function build_dqd_number_ops_LR(dqd::Dqd)
     return nL, nR, nD
 end
 
+"""
+Build DQD number operators in the g-e basis
+"""
+function build_dqd_number_ops_ge(dqd::Dqd)
+    cg, ce = build_dqd_ladder_ops_ge(dqd)
+
+    ng = cg' * cg
+    ne = ce' * ce
+    nD = ng * ne
+
+    return ng, ne, nD
+end
+
+@doc raw"""
+Build DQD total number operator
+"""
+function build_dqd_number_op(dqd::Dqd)
+    nL, nR, nD = build_dqd_number_ops_LR(dqd)
+    return nL + nR
+end
+
 # --- g-e basis ---
 
 @doc raw"""
@@ -146,9 +168,10 @@ end
 Build DQD g-e ladder operators
 """
 function build_dqd_ladder_ops_ge(dqd::Dqd)
-    ket_0, ket_g, ket_e = build_dqd_basis_ge(dqd)
-    cg = ket_0 * ket_g'
-    ce = ket_0 * ket_e'
+    cL, cR = build_dqd_ladder_ops_LR(dqd)
+    θ = get_θ(dqd)
 
+    cg = cos(θ/2.) * cL - sin(θ/2.) * cR
+    ce = sin(θ/2.) * cL + cos(θ/2.) * cR
     return cg, ce
 end
