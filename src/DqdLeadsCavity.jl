@@ -4,18 +4,25 @@ module DqdLeadsCavity
 using QuantumToolbox, LinearAlgebra
 using QuadGK
 
-# Structures
 
+# Structures
 include("structs/dqd.jl")
 include("structs/leads.jl")
 include("structs/dqd_leads.jl")
 include("structs/cavity.jl")
 
-# Functions
+# Useful functions
+include("utilities.jl")
+
+# Operators
 include("hamiltonians.jl")
 include("lindblad_operators.jl")
+
+# Currents
 include("currents_neqgf.jl")
 include("currents_thcl.jl")
-include("utilities.jl")
+include("currents_thcg.jl")
+include("currents_output.jl")
+
 
 end

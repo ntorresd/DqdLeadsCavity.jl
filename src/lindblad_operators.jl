@@ -1,5 +1,6 @@
 export build_L_ops_local_LR, build_L_ops_semilocal_LR
-export build_L_ops_local_ge
+export build_L_ops_thcg_int
+
 
 @doc raw"""
 Build Lindblad operators corresponding to the local LME evaluating
@@ -52,7 +53,7 @@ function build_L_ops_semilocal_LR(dqd_leads::DqdLeads)
     # Creation and annihilation operators 
     cL, cR = build_dqd_ladder_ops_LR(dqd_leads.dqd)
 
-    # Lindblad jump operators (lead-dot tunneling)
+    # Lindblad jump operators (lead-dot tunneling),
     L_ops = [
         sqrt(ΓL * fL) * (1. - cR' * cR) * cL',
         sqrt(ΓL * (1. - fL)) * (1. - cR' * cR) * cL,
@@ -66,40 +67,45 @@ function build_L_ops_semilocal_LR(dqd_leads::DqdLeads)
     return L_ops
 end
 
+
 @doc raw"""
-Build Lindblad operators corresponding to the local LME evaluating
-the eigen-energies of the DQD (g-e)
+Lindblad operators for the interacting DQD for the THC global case 
+according to eq. (118) [Potts2021]. This only works for ϵL = ϵR.
 """
-function build_L_ops_local_ge(dqd_leads::DqdLeads)
-    # Parameters
-    Ω = get_Ω(dqd_leads.dqd); θ = get_θ(dqd_leads.dqd)
+function build_L_ops_thcg_int(dqd_leads::DqdLeads)
+    (; ϵL, ϵR, μL, μR, ΓL, ΓR, TL, TR) = context_LR(dqd_leads)
     ϵg, ϵe = get_eigen_energies(dqd_leads.dqd)
-    Δμ = dqd_leads.leads.Δμ
+    U = dqd_leads.dqd.U
 
-    # Fermi functions
-    fLg = fermi(ϵg, Δμ/2., TL)
-    fRg = fermi(ϵg, - Δμ/2., TR)
+    fLg, fLe, fRg, fRe = get_fermi_ge(dqd_leads)
+    fLgU, fLeU, fRgU, fReU = fermi(ϵg + U, μL, TL), fermi(ϵe + U, μL, TL), fermi(ϵg + U, μR, TR), fermi(ϵe + U, μR, TR)
 
-    fLe = fermi(ϵe, Δμ/2., TL)
-    fRe = fermi(ϵe, - Δμ/2., TR)
-
-    # Jump rates by process
-    Γg0L = ΓL * fLg * cos(θ/2)^2
-    Γg0R = ΓR * fRg * sin(θ/2)^2
-    Γe0L = ΓL * fLe * sin(θ/2)^2
-    Γe0R = ΓR * fRe * cos(θ/2)^2
-    Γ0gL = ΓL * (1. - fLg) * cos(θ/2)^2
-    Γ0gR = ΓR * (1. - fRg) * sin(θ/2)^2
-    Γ0eL = ΓL * (1. - fLe) * sin(θ/2)^2
-    Γ0eR = ΓR * (1. - fRe) * cos(θ/2)^2
-    
-    # Creation and annihilation operators 
     cg, ce = build_dqd_ladder_ops_ge(dqd_leads.dqd)
-
-    # Lindblad operators
     L_ops = [
-        sqrt(Γg0L) * cg', sqrt(Γ0gL) * cg, sqrt(Γe0L) * ce',sqrt(Γ0eL) * ce,
-        sqrt(Γg0R) * cg', sqrt(Γ0gR) * cg, sqrt(Γe0R) * ce', sqrt(Γ0eR) * ce
+        # Left lead jump operators
+        ## ground state
+        sqrt(ΓL * fLg / 2.) * (1. - ce' * ce) * cg,
+        sqrt(ΓL * (1. - fLg) / 2.) * (1. - ce' * ce) * cg',
+        sqrt(ΓL * fLgU / 2.) * (ce' * ce * cg'),
+        sqrt(ΓL * (1. - fLgU) / 2.) * (ce' * ce * cg),
+        ## excited state
+        sqrt(ΓL * fLe / 2.) * (1. - cg' * cg) * ce,
+        sqrt(ΓL * (1. - fLe) / 2.) * (1. - cg' * cg) * ce',
+        sqrt(ΓL * fLeU / 2.) * (cg' * cg * ce'),
+        sqrt(ΓL * (1. - fLeU) / 2.) * (cg' * cg * ce),
+        # Right lead jump operators
+        ## ground state
+        sqrt(ΓR * fRg / 2.) * (1. - ce' * ce) * cg,
+        sqrt(ΓR * (1. - fRg) / 2.) * (1. - ce' * ce) * cg',
+        sqrt(ΓR * fRgU / 2.) * (ce' * ce * cg'),
+        sqrt(ΓR * (1. - fRgU) / 2.) * (ce' * ce * cg),
+        ## excited state
+        sqrt(ΓR * fRe / 2.) * (1. - cg' * cg) * ce,
+        sqrt(ΓR * (1. - fRe) / 2.) * (1. - cg' * cg) * ce',
+        sqrt(ΓR * fReU / 2.) * (cg' * cg * ce'),
+        sqrt(ΓR * (1. - fReU) / 2.) * (cg' * cg * ce)
     ]
-    return L_ops
+
+    return(L_ops)
 end
+

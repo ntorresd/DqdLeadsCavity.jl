@@ -12,10 +12,10 @@ function build_H_dqd_LR(dqd::Dqd)
 
 
     # Hamiltonian: on-site + tunneling
-    H = ϵL * nL + ϵR * nR + dqd.tc * (cL' * cR + cR' * cL)
+    H = ϵL * cL' * cL + ϵR * cR' * cR + dqd.tc * (cL' * cR + cR' * cL)
 
     # Add non-linear term for finite Coulomb interaction
-    H = dqd.blockade ? H : H + dqd.U * nL * nR
+    H = dqd.blockade ? H : H + dqd.U * cL' * cL * cR' * cR
 
     return H
 end
@@ -34,22 +34,13 @@ end
 Build DQD Hamiltonian in the g-e parametrization
 """
 function build_H_dqd_ge(dqd::Dqd)
-    dqd.blockade || throw(
-        ArgumentError(
-            "DQD g-e basis representation is not supported for dqd.blockade=$(dqd.blockade)"
-        ),
-    )
-    # Parameters
-    dim = get_dim(dqd)
-    Ω = get_Ω(dqd)
+    cg, ce = build_dqd_ladder_ops_ge(dqd)
+    ϵg, ϵe = get_eigen_energies(dqd)
+    H = (ϵg * cg' * cg) + (ϵe * ce' * ce)
 
-    # Operators
-    ## Identity with zero in the first entry (|0><0|)
-    id_ge = id_no_vacuum(dim)
-    σz_ge = build_σz_ge(dqd)
-
-    H_dqd = Ω * σz_ge / 2. + dqd.ϵ_avg * id_ge
-    return H_dqd
+    # Add non-linear term for finite Coulomb interaction
+    H = dqd.blockade ? H : H + (dqd.U * cg' * cg * ce' * ce)
+    return H
 end
 function build_H_dqd_ge(dqd::Dqd, cavity::Cavity)
     dqd.blockade || throw(
