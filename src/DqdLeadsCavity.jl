@@ -8,8 +8,9 @@ using QuadGK
 # Structures
 include("structs/dqd.jl")
 include("structs/leads.jl")
-include("structs/dqd_leads.jl")
 include("structs/cavity.jl")
+include("structs/dqd_leads.jl")
+include("structs/dqd_leads_cavity.jl")
 
 # Useful functions
 include("utilities.jl")
