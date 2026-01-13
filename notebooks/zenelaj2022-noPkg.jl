@@ -95,6 +95,9 @@ function get_Ω(Δϵ::Real, tc::Real)
 	return sqrt(4 * tc^2 + Δϵ^2)
 end
 
+# ╔═╡ 5c9022d5-1d1e-4151-8562-d576337e41f7
+get_Ω(Δϵ, tc)
+
 # ╔═╡ c6e449e8-8484-411e-b057-52db816c299b
 """
 DQD mixing angle in the g-e basis
@@ -3044,6 +3047,7 @@ version = "3.6.0+0"
 # ╠═619ffcec-0682-452f-8a8b-1f3a78a07c0a
 # ╟─69d09515-9cc5-4f96-9458-c51ae912c74c
 # ╠═39223e7c-add2-4040-bc0f-2889fc682219
+# ╠═5c9022d5-1d1e-4151-8562-d576337e41f7
 # ╟─ed339fce-911c-45e9-8e3a-4c242d41625a
 # ╠═e84e9be5-a09b-41cf-ade5-6e770bdd6b3d
 # ╠═c6e449e8-8484-411e-b057-52db816c299b
