@@ -3,7 +3,7 @@ export build_L_ops_thcg_int
 
 
 @doc raw"""
-Build Lindblad operators corresponding to the local LME evaluating
+Lindblad operators corresponding to the local LME evaluating
 the fermi distributions at the corresponding on-site energies.
 """
 function build_L_ops_local_LR(dqd_leads::DqdLeads)
@@ -16,20 +16,20 @@ function build_L_ops_local_LR(dqd_leads::DqdLeads)
     fR = fermi(ϵR, μR, dqd_leads.leads.TR)
 
     # Creation and annihilation operators 
-    cL, cR = build_dqd_ladder_ops_LR(dqd_leads.dqd)
+    sL, sR = build_dqd_vladder_ops_LR(dqd_leads.dqd)
 
     # Lindblad jump operators (lead-dot tunneling)
     L_ops = [
-        sqrt(dqd_leads.ΓL * fL) * cL',
-        sqrt(dqd_leads.ΓL * (1 - fL)) * cL,
-        sqrt(dqd_leads.ΓR * fR) * cR',
-        sqrt(dqd_leads.ΓR * (1 - fR)) * cR
+        sqrt(dqd_leads.ΓL * fL) * sL',
+        sqrt(dqd_leads.ΓL * (1 - fL)) * sL,
+        sqrt(dqd_leads.ΓR * fR) * sR',
+        sqrt(dqd_leads.ΓR * (1 - fR)) * sR
     ]
     return L_ops
 end
 
 @doc raw"""
-Build Lindblad operators corresponding to the semi-local LME evaluating
+Lindblad operators corresponding to the semi-local LME evaluating
 the fermi distributions at the corresponding on-site energies.
 """
 function build_L_ops_semilocal_LR(dqd_leads::DqdLeads)
@@ -51,22 +51,21 @@ function build_L_ops_semilocal_LR(dqd_leads::DqdLeads)
     fR_U = fermi(ϵR + U, μR, TR)
     
     # Creation and annihilation operators 
-    cL, cR = build_dqd_ladder_ops_LR(dqd_leads.dqd)
+    sL, sR = build_dqd_vladder_ops_LR(dqd_leads.dqd)
 
     # Lindblad jump operators (lead-dot tunneling),
     L_ops = [
-        sqrt(ΓL * fL) * (1. - cR' * cR) * cL',
-        sqrt(ΓL * (1. - fL)) * (1. - cR' * cR) * cL,
-        sqrt(ΓL * fL_U) * cR' * cR * cL',
-        sqrt(ΓL * (1. - fL_U)) * cR' * cR * cL,
-        sqrt(ΓR * fR) * (1. - cL' * cL) * cR',
-        sqrt(ΓR * (1. - fR)) * (1. - cL' * cL) * cR,
-        sqrt(ΓR * fR_U) * cL' * cL * cR',
-        sqrt(ΓR * (1. - fR_U)) * cL' * cL * cR,
+        sqrt(ΓL * fL) * (1. - sR' * sR) * sL',
+        sqrt(ΓL * (1. - fL)) * (1. - sR' * sR) * sL,
+        sqrt(ΓL * fL_U) * sR' * sR * sL',
+        sqrt(ΓL * (1. - fL_U)) * sR' * sR * sL,
+        sqrt(ΓR * fR) * (1. - sL' * sL) * sR',
+        sqrt(ΓR * (1. - fR)) * (1. - sL' * sL) * sR,
+        sqrt(ΓR * fR_U) * sL' * sL * sR',
+        sqrt(ΓR * (1. - fR_U)) * sL' * sL * sR,
     ]
     return L_ops
 end
-
 
 @doc raw"""
 Lindblad operators for the interacting DQD for the THC global case 
@@ -108,4 +107,3 @@ function build_L_ops_thcg_int(dqd_leads::DqdLeads)
 
     return(L_ops)
 end
-
