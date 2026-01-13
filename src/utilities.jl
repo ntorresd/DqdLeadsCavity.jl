@@ -1,7 +1,7 @@
 export fermi
-export get_Δd, get_dim
 export id_no_vacuum
 export context_LR
+export D_sop
 
 @doc raw"""
 Fermi distribution
@@ -16,10 +16,10 @@ function fermi(ϵ, μ, T)
 end
 
 @doc raw"""
-Detuning between the DQD and cavity drive
+Lindblad dissipator superoperator
 """
-function get_Δd(dqd::Dqd, cavity::Cavity)
-    return get_Ω(dqd) - cavity.ωd
+function D_sop(x::QuantumObject{Operator}, ρ::QuantumObject{Operator})
+	return x * ρ * x' - 1/2 * x' * x * ρ - 1/2 * ρ * x' * x
 end
 
 @doc raw"""
@@ -27,14 +27,6 @@ Identity for the subspace without the vacuum state
 """
 function id_no_vacuum(dim::Int)
     return QuantumObject(Matrix(Diagonal(vcat(0.0, ones(dim - 1))))) 
-end
-
-@doc raw"""
-Get object dimension
-"""
-function get_dim(dqd::Dqd)
-    dim = dqd.blockade ? 3 : 4
-    return dim
 end
 
 @doc raw"""
