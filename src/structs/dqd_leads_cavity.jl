@@ -71,7 +71,7 @@ function build_dqd_vladder_ops_LR(dqd_leads_cavity::DqdLeadsCavityObj)
 end
 
 @doc raw"""
-Build DQD number operators in the LR basis
+DQD number operators in the LR basis
 """
 function build_dqd_number_ops_LR(dqd::Dqd)
     if dqd.blockade
