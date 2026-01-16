@@ -1,7 +1,7 @@
 export Cavity
 export get_Δc, get_Δd, get_α
 export get_nth_cav, get_n_cav_ss
-export id_Cavity
+export build_id_cavity
 
 mutable struct Cavity
     ωc::Real    # Cavity resonance frequency
@@ -81,7 +81,7 @@ end
 @doc raw"""
 Cavity Identity operator
 """
-function id_Cavity(cavity::Cavity)
+function build_id_cavity(cavity::Cavity)
     dim = cavity.Nc
     return qeye(dim)
 end

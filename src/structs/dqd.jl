@@ -1,6 +1,6 @@
 export Dqd
 export get_dim, get_Ω, get_θ, get_onsite_energies, get_eigen_energies
-export id_Dqd
+export build_id_dqd
 export build_dqd_basis_LR
 export build_dqd_vladder_ops_ge, build_dqd_ladder_ops_ge, build_dqd_σz_ge
 export build_dqd_number_ops_ge, build_dqd_number_op
@@ -83,7 +83,7 @@ end
 @doc raw"""
 DQD Identity operator
 """
-function id_Dqd(dqd::Dqd)
+function build_id_dqd(dqd::Dqd)
     dim = get_dim(dqd)
     return qeye(dim)
 end
@@ -123,6 +123,7 @@ function build_dqd_σz_ge(dqd::Dqd)
 	σz = se'*se - sg'*sg;
 	return σz
 end
+
 
 """
 DQD number operators in the g-e basis

@@ -7,14 +7,15 @@ DQD Hamiltonian in the L-R basis
 function build_H_dqd_LR(dqd::Dqd)
     # Parameters
     ϵL, ϵR = get_onsite_energies(dqd)
+
     # Operators
-    sL, sR = build_dqd_vladder_ops_LR(dqd)
+    dL, dR = dqd.blockade ? build_dqd_vladder_ops_LR(dqd) : (fdestroy(2, 1), fdestroy(2, 2))
 
     # Hamiltonian: on-site + tunneling
-    H = ϵL * sL' * sL + ϵR * sR' * sR + dqd.tc * (sL' * sR + sR' * sL)
+    H = ϵL * dL' * dL + ϵR * dR' * dR + dqd.tc * (dL' * dR + dR' * dL)
 
     # Add non-linear term for finite Coulomb interaction
-    H = dqd.blockade ? H : H + dqd.U * sL' * sL * sR' * sR
+    H = dqd.blockade ? H : H + dqd.U * dL' * dL * dR' * dR
 
     return H
 end
@@ -33,12 +34,12 @@ end
 DQD Hamiltonian in the g-e parametrization
 """
 function build_H_dqd_ge(dqd::Dqd)
-    cg, ce = build_dqd_ladder_ops_ge(dqd)
+    dg, de = dqd.blockade ? build_dqd_vladder_ops_ge(dqd) : build_dqd_fermi_ops_ge(dqd)
     ϵg, ϵe = get_eigen_energies(dqd)
-    H = (ϵg * cg' * cg) + (ϵe * ce' * ce)
+    H = (ϵg * dg' * dg) + (ϵe * de' * de)
 
     # Add non-linear term for finite Coulomb interaction
-    H = dqd.blockade ? H : H + (dqd.U * cg' * cg * ce' * ce)
+    H = dqd.blockade ? H : H + (dqd.U * dg' * dg * de' * de)
     return H
 end
 function build_H_dqd_ge(dqd_leads_cavity::DqdLeadsCavityObj)
@@ -55,7 +56,7 @@ function build_H_dqd_ge(dqd_leads_cavity::DqdLeadsCavityObj)
 
     # Operators
     ## Identity with zero in the first entry (|0><0|)
-    id_ge = tensor(id_Dqd(dqd), id_Cavity(cavity))
+    id_ge = tensor(build_id_dqd(dqd), build_id_cavity(cavity))
     σz_ge = build_dqd_σz_op(dqd_leads_cavity)
 
     H_dqd = Δd * σz_ge / 2. + dqd.ϵ_avg * id_ge
