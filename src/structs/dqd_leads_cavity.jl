@@ -1,4 +1,5 @@
 export DqdLeadsCavityObj
+export build_dqd_fermi_ops_ge
 export build_dqd_vladder_ops_LR, build_dqd_number_ops_LR
 export build_dqd_σz_op
 export build_cav_a_op
@@ -62,7 +63,7 @@ end
 function build_dqd_vladder_ops_LR(dqd_leads_cavity::DqdLeadsCavityObj)
     dqd = dqd_leads_cavity.dqd_leads.dqd
     sL_loc, sR_loc = build_dqd_vladder_ops_LR(dqd)
-    id_cav = id_Cavity(dqd_leads_cavity.cavity)
+    id_cav = build_id_cavity(dqd_leads_cavity.cavity)
 
     sL = tensor(sL_loc, id_cav)
     sR = tensor(sR_loc, id_cav)
@@ -90,7 +91,7 @@ end
 function build_dqd_number_ops_LR(dqd_leads_cavity::DqdLeadsCavityObj)
     dqd = dqd_leads_cavity.dqd_leads.dqd
     nL_loc, nR_loc = build_dqd_number_ops_LR(dqd)
-    id_cav = id_Cavity(dqd_leads_cavity.cavity)
+    id_cav = build_id_cavity(dqd_leads_cavity.cavity)
 
     nL = tensor(nL_loc, id_cav)
     nR = tensor(nR_loc, id_cav)
@@ -111,7 +112,7 @@ function build_dqd_vladder_ops_ge(dqd::Dqd)
 end
 function build_dqd_vladder_ops_ge(dqd_leads_cavity::DqdLeadsCavityObj)
     sg_loc, se_loc = build_dqd_vladder_ops_ge(dqd_leads_cavity.dqd_leads.dqd)
-    id_cav = id_Cavity(dqd_leads_cavity.cavity)
+    id_cav = build_id_cavity(dqd_leads_cavity.cavity)
 
     sg = tensor(sg_loc, id_cav)
     se = tensor(se_loc, id_cav)
@@ -153,6 +154,27 @@ function build_dqd_σz_op(dqd_leads_cavity::DqdLeadsCavityObj)
     return σz
 end
 
+
+@doc raw"""
+DQD fermionic operators in the ground-excited basis
+"""
+function build_dqd_fermi_ops_ge(dqd::Dqd)
+    θ = get_θ(dqd)
+    dL = fdestroy(2, 1);
+    dR = fdestroy(2, 2);
+
+    dg = cos(θ) * dL - sin(θ) * dR
+    de = sin(θ) * dL + cos(θ) * dR
+    return dg, de
+end
+function build_dqd_fermi_ops_ge(dqd_leads_cavity::DqdLeadsCavityObj)
+    dg0, de0 = build_dqd_fermi_ops_ge(dqd_leads_cavity.dqd_leads_cavity.dqd)
+    id_cav = build_id_cavity(dqd_leads_cavity.cavity)
+
+    dg, de = tensor(dg0, id_cav), tensor(de0, id_cav)
+    return dg, de
+end
+
 @doc raw"""
 Cavity annihilation operator
 """
@@ -164,7 +186,7 @@ function build_cav_a_op(cavity::Cavity; disp::Bool = true)
 end
 function build_cav_a_op(dqd_leads_cavity::DqdLeadsCavityObj; disp::Bool = true)
     a_loc = build_cav_a_op(dqd_leads_cavity.cavity; disp = disp)
-    id_dqd = id_Dqd(dqd_leads_cavity.dqd_leads.dqd)
+    id_dqd = build_id_dqd(dqd_leads_cavity.dqd_leads.dqd)
 
     a = tensor(id_dqd, a_loc)
     return a
