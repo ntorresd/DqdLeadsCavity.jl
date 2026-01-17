@@ -1,8 +1,8 @@
 export Dqd
 export get_dim, get_Ω, get_θ, get_onsite_energies, get_eigen_energies
 export build_id_dqd
-export build_dqd_basis_LR
-export build_dqd_vladder_ops_ge, build_dqd_ladder_ops_ge, build_dqd_σz_ge
+export build_dqd_basis_LR, build_dqd_basis_ge
+export build_dqd_fermi_ops_ge, build_dqd_ladder_ops_ge, build_dqd_σz_ge
 export build_dqd_number_ops_ge, build_dqd_number_op
 
 # --- Dqd structure ---
@@ -64,8 +64,8 @@ end
 DQD on-site energies
 """
 function get_onsite_energies(dqd::Dqd)
-    ϵL = dqd.ϵ_avg + dqd.Δϵ / 2.
-    ϵR = dqd.ϵ_avg - dqd.Δϵ / 2.
+    ϵL = dqd.ϵ_avg - dqd.Δϵ / 2.
+    ϵR = dqd.ϵ_avg + dqd.Δϵ / 2.
     return ϵL, ϵR
 end
 
@@ -89,7 +89,7 @@ function build_id_dqd(dqd::Dqd)
 end
 
 @doc raw"""
-DQD L-R ket basis
+DQD L-R ket basis. We implicitly assume the ordering convention dR'dL'|0>=|1,1>.
 """
 function build_dqd_basis_LR(dqd::Dqd)
     dim = get_dim(dqd)
@@ -104,13 +104,42 @@ function build_dqd_basis_LR(dqd::Dqd)
         # Dimensions
         dims = (2, 2)
 
+        dL, dR = build_dqd_fermi_ops_LR(dqd)
         # DQD basis
-        ket_0 = fock(dim, 0, dims = dims)  # |0,0⟩
+        ket_0 = fock(dim, 0, dims = dims)   # |0,0⟩
         ket_L = fock(dim, 1, dims = dims)   # |0,1⟩
         ket_R = fock(dim, 2, dims = dims)   # |1,0⟩
-        ket_D = fock(dim, 3, dims = dims)     # |1,1⟩
+        ket_D = dR' * dL' * ket_0           # |1,1⟩
 
         return ket_0, ket_L, ket_R, ket_D
+    end
+end
+
+@doc raw"""
+DQD ket basis in the ground-excited basis.
+"""
+function build_dqd_basis_ge(dqd::Dqd)
+    dim = get_dim(dqd)
+    if dqd.blockade
+        θ = get_θ(dqd)
+        ket_0, ket_L, ket_R = build_dqd_basis_LR(dqd)
+        # DQD basis
+        ket_g = cos(θ/2.) * ket_L + sin(θ/2.) * ket_R
+        ket_e = -sin(θ/2.) * ket_L + cos(θ/2.) * ket_R
+
+        return ket_0, ket_g, ket_e
+    else
+        # Dimensions
+        dims = (2, 2)
+
+        # DQD basis
+        dg, de = build_dqd_fermi_ops_ge(dqd)
+        ket_0 = fock(dim, 0, dims = dims)   # |0⟩
+        ket_g = dg' * ket_0                 # |g⟩
+        ket_e = de' * ket_0                 # |e⟩
+        ket_d = de' * dg' * ket_0           # |d⟩
+
+        return ket_0, ket_g, ket_e, ket_d
     end
 end
 
@@ -118,7 +147,7 @@ end
 DQD-σz operator in the ground-excited basis
 """
 function build_dqd_σz_ge(dqd::Dqd)
-	sg, se = build_dqd_vladder_ops_ge(dqd);
+	sg, se = build_dqd_fermi_ops_ge(dqd);
 	
 	σz = se'*se - sg'*sg;
 	return σz

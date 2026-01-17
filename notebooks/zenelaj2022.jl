@@ -132,7 +132,7 @@ function build_L_ops_z2022(dqd_leads_cavity::DqdLeadsCavityObj; side::Any = fals
 	nth_cav = get_nth_cav(dqd_leads_cavity.cavity)
 
 	# Derived operators
-	sg, se = build_dqd_vladder_ops_ge(dqd_leads_cavity)
+	sg, se = build_dqd_fermi_ops_ge(dqd_leads_cavity)
 	σm, σp = build_dqd_ladder_ops_ge(dqd_leads_cavity)
 	σz = build_dqd_σz_op(dqd_leads_cavity)
 	a = build_cav_a_op(dqd_leads_cavity)
@@ -158,7 +158,7 @@ function get_particle_current(
     Γg0, Γe0, Γ0g, Γ0e = get_transition_rates_ge(dqd_leads_cavity.dqd_leads; side = side)
 
 	# Derived operators
-	sg, se = build_dqd_vladder_ops_ge(dqd_leads_cavity)
+	sg, se = build_dqd_fermi_ops_ge(dqd_leads_cavity)
 	nL, nR = build_dqd_number_ops_LR(dqd_leads_cavity)
 
 	# Dissipator
@@ -228,7 +228,9 @@ let
 	    xlabel = L"\sqrt{κ_{in}\dot{N}}",
 	    ylabel = L"I",
 		label = [L"I_{L}" L"I_{L}^{ld}" L"I_{L, ana}^{ld}"],
-	    linestyle = [:solid :dash :dashdot],
+	    linestyle = [:dash :dash :solid],
+		color = [:blue :black :black],
+		linealpha = [1.0, 1.0, 0.3],
 		xaxis = :log,
 	    legend = :right,
 	    dpi = 200

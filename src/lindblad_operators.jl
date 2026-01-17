@@ -16,14 +16,14 @@ function build_L_ops_local_LR(dqd_leads::DqdLeads)
     fR = fermi(ϵR, μR, dqd_leads.leads.TR)
 
     # Creation and annihilation operators 
-    sL, sR = build_dqd_vladder_ops_LR(dqd_leads.dqd)
+    dL, dR = build_dqd_fermi_ops_LR(dqd_leads.dqd)
 
     # Lindblad jump operators (lead-dot tunneling)
     L_ops = [
-        sqrt(dqd_leads.ΓL * fL) * sL',
-        sqrt(dqd_leads.ΓL * (1 - fL)) * sL,
-        sqrt(dqd_leads.ΓR * fR) * sR',
-        sqrt(dqd_leads.ΓR * (1 - fR)) * sR
+        sqrt(dqd_leads.ΓL * fL) * dL',
+        sqrt(dqd_leads.ΓL * (1 - fL)) * dL,
+        sqrt(dqd_leads.ΓR * fR) * dR',
+        sqrt(dqd_leads.ΓR * (1 - fR)) * dR
     ]
     return L_ops
 end
@@ -51,18 +51,18 @@ function build_L_ops_semilocal_LR(dqd_leads::DqdLeads)
     fR_U = fermi(ϵR + U, μR, TR)
     
     # Creation and annihilation operators 
-    sL, sR = build_dqd_vladder_ops_LR(dqd_leads.dqd)
+    dL, dR = build_dqd_fermi_ops_LR(dqd_leads.dqd)
 
     # Lindblad jump operators (lead-dot tunneling),
     L_ops = [
-        sqrt(ΓL * fL) * (1. - sR' * sR) * sL',
-        sqrt(ΓL * (1. - fL)) * (1. - sR' * sR) * sL,
-        sqrt(ΓL * fL_U) * sR' * sR * sL',
-        sqrt(ΓL * (1. - fL_U)) * sR' * sR * sL,
-        sqrt(ΓR * fR) * (1. - sL' * sL) * sR',
-        sqrt(ΓR * (1. - fR)) * (1. - sL' * sL) * sR,
-        sqrt(ΓR * fR_U) * sL' * sL * sR',
-        sqrt(ΓR * (1. - fR_U)) * sL' * sL * sR,
+        sqrt(ΓL * fL) * (1. - dR' * dR) * dL',
+        sqrt(ΓL * (1. - fL)) * (1. - dR' * dR) * dL,
+        sqrt(ΓL * fL_U) * dR' * dR * dL',
+        sqrt(ΓL * (1. - fL_U)) * dR' * dR * dL,
+        sqrt(ΓR * fR) * (1. - dL' * dL) * dR',
+        sqrt(ΓR * (1. - fR)) * (1. - dL' * dL) * dR,
+        sqrt(ΓR * fR_U) * dL' * dL * dR',
+        sqrt(ΓR * (1. - fR_U)) * dL' * dL * dR,
     ]
     return L_ops
 end
