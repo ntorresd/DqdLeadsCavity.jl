@@ -135,33 +135,48 @@ md"""
 
 # ╔═╡ 78ae1607-0877-4a9b-a3a9-000cd8f8edd1
 """
-Analytical steady-state solution for the occupation of the DQD grond/excited state in the global approach according to [eq. (A27) Prech2023]
+Analytical steady-state solution for the occupation of the DQD grond/excited state according to global approach [eq. (A27) Prech2023]
 """
 function get_dqd_occupation_ge(dqd_leads::DqdLeads)
 	ΓLg, ΓLe, ΓRg, ΓRe = get_coupling_strengths_gl(dqd_leads)
 	fLg, fLe, fRg, fRe = get_fermi_factors_gl(dqd_leads)
 
-	ng_ss = (ΓLg * fLg + ΓRg * fRg) / (ΓLg + ΓRg)
-	ne_ss = (ΓLe * fLe + ΓRe * fRe) / (ΓLe + ΓRe)
+	ng = (ΓLg * fLg + ΓRg * fRg) / (ΓLg + ΓRg)
+	ne = (ΓLe * fLe + ΓRe * fRe) / (ΓLe + ΓRe)
 
-	return ng_ss, ne_ss
+	return ng, ne
 end
 
-# ╔═╡ eb7a9560-735d-40b5-b387-eea392f3ca80
-let
-	tc_list = logrange(1e-5, 100, 1000);
+# ╔═╡ b546be59-30ed-4ce6-b217-0822ca85bafa
+begin
+	tc_list = logrange(1e-3, 1e1, 1000);
 	dqdObj = deepcopy(dqd_leads)
-	
-	n_dqd_ss_num_g = []
-	n_dqd_ss_num_e = []
-	n_dqd_ss_ana_g = []
-	n_dqd_ss_ana_e = []
+	ρss_list = []
 	for tc in tc_list
 		dqdObj.dqd.tc = tc
 		ρss = steadystate(
 			build_H_dqd_ge(dqdObj.dqd),
 			get_L_ops_dqd_gl(dqdObj)
 		)
+		push!(ρss_list, ρss)
+	end
+end
+
+# ╔═╡ eb7a9560-735d-40b5-b387-eea392f3ca80
+begin
+	# ground state steady-state occupation
+	n_dqd_ss_num_g = []
+	n_dqd_ss_ana_g = []
+	# excited state steady-state occupation
+	n_dqd_ss_num_e = []
+	n_dqd_ss_ana_e = []
+	# ground-excited state coherence 
+	α_ge_ss_num = []
+	α_ge_ss_ana = []
+	local i = 1
+	for tc in tc_list
+		dqdObj.dqd.tc = tc
+		ρss = ρss_list[i]
 
 		dg, de = build_dqd_fermi_ops_ge(dqdObj.dqd)
 		ng, ne = dg' * dg, de' * de
@@ -169,33 +184,139 @@ let
 		ng_ana, ne_ana = get_dqd_occupation_ge(dqdObj)
 
 		push!(n_dqd_ss_num_g, expect(ng, ρss))
-		push!(n_dqd_ss_num_e, expect(ne, ρss))
 		push!(n_dqd_ss_ana_g, ng_ana)
+		push!(n_dqd_ss_num_e, expect(ne, ρss))
 		push!(n_dqd_ss_ana_e, ne_ana)
+		push!(α_ge_ss_num, abs(expect(de' * dg, ρss)))
+		push!(α_ge_ss_ana, 0.0)
+		i = i + 1
 	end
-
-	n_dqd_ss_plot = plot(
-		tc_list,
-		[n_dqd_ss_num_g, n_dqd_ss_num_e, n_dqd_ss_ana_g, n_dqd_ss_ana_e],
-	    xlabel = L"t_c",
-	    ylabel = L"\left< d_\sigma^\dagger d_\sigma \right>",
-		label = [L"\bar{n}_g^{num}" L"\bar{n}_e^{num}" L"\bar{n}_g^{ana}" L"\bar{n}_e^{ana}"],
-	    linestyle = [:solid :solid :dash :dash],
-    	linealpha = [0.3, 0.3, 1.0, 1.0],
-		xaxis = :log,
-	    legend = :right,
-	    dpi = 200
-	)
 end
 
-# ╔═╡ 999cfdc7-f186-4ea4-8678-c7afdcd5c8b4
-L_ops = get_L_ops_dqd_gl(dqd_leads)
+# ╔═╡ e01aedb5-f6f7-4a7e-af82-952b8a715725
+n_dqd_ss_plot_ge = plot(
+	tc_list,
+	[n_dqd_ss_num_g, n_dqd_ss_ana_g, n_dqd_ss_num_e, n_dqd_ss_ana_e, α_ge_ss_num, α_ge_ss_ana],
+	xlabel = L"t_c",
+	ylabel = L"\left< d_\sigma^\dagger d_\sigma' \right>",
+	label = [L"\bar{n}_g^{num}" L"\bar{n}_g^{ana}" L"\bar{n}_e^{num}" L"\bar{n}_e^{ana}" L"|α_{ge}^{num}|" L"|α_{ge}^{ana}|"],
+	linestyle = [:dash :solid :dash :solid :dash :solid],
+	linealpha = [.5, .1, .5, .1, .5, 0.1],
+	color = [:blue :blue :green :green :red :red],
+	xaxis = :log,
+	legend = :right,
+	dpi = 200
+)
 
-# ╔═╡ c6035371-442d-47ea-9928-0b59f20eb7dc
-H_dqd_ge = build_H_dqd_ge(dqd_leads.dqd)
+# ╔═╡ 9c37cdf9-f718-4e13-82d0-1c6906680e65
+# savefig(n_dqd_ss_plot_ge, "../../plots/n_dqd_ss_plot_prech2023.png")
 
-# ╔═╡ 7dcc603f-7726-4884-bcae-ed860628a7a1
-L_ops[1]
+# ╔═╡ 4347ffe9-4619-43c2-a676-358ab5d6f17f
+md"""
+## Steady-state occupations (left-right)
+"""
+
+# ╔═╡ d50e14ac-ff1e-4309-a31b-b488d09dc359
+"""
+Analytical steady-state solution for the occupation of the DQD left and right states according to global approach [eq. (A28) Prech2023]
+"""
+function get_dqd_occupation_LR(dqd_leads::DqdLeads)
+	θ = get_θ(dqd_leads.dqd)
+	cθ2, sθ2 = cos(θ)^2, sin(θ)^2
+	
+	ng, ne = get_dqd_occupation_ge(dqd_leads)
+	
+	nL = sθ2 * ng + cθ2 * ne
+	nR = cθ2 * ng + sθ2 * ne
+
+	return nL, nR
+end
+
+# ╔═╡ d6f22623-1b35-4a83-89eb-10686d758121
+"""
+Analytical steady-state solution for the coherence between the ground and excited levels of the DQD according to the global approach [eq. (A29) Prech2023]
+"""
+function get_dqd_coherence_LR(dqd_leads::DqdLeads)
+	θ = get_θ(dqd_leads.dqd)
+	ng, ne = get_dqd_occupation_ge(dqd_leads)
+	α_abs = abs(sin(θ/2.) * cos(θ/2.) * (ne - ng))
+	return(α_abs)
+end
+
+# ╔═╡ b0bc5fb9-1e57-498e-8d6e-32c2285cd70a
+begin
+	# ground state steady-state occupation
+	n_dqd_ss_num_L = []
+	n_dqd_ss_ana_L = []
+	# excited state steady-state occupation
+	n_dqd_ss_num_R = []
+	n_dqd_ss_ana_R = []
+	# ground-excited state coherence 
+	α_LR_ss_num = []
+	α_LR_ss_ana = []
+	local i = 1
+	for tc in tc_list
+		dqdObj.dqd.tc = tc
+		ρss = ρss_list[i]
+
+		dL, dR = build_dqd_fermi_ops_LR(dqdObj.dqd)
+		nL, nR = dL' * dL, dR' * dR
+		ket_0, ket_L, ket_R, ket_D = build_dqd_basis_LR(dqdObj.dqd)
+
+		nL_ana, nR_ana = get_dqd_occupation_LR(dqdObj)
+		push!(n_dqd_ss_num_L, expect(nL, ρss))
+		push!(n_dqd_ss_ana_L, nL_ana)
+		push!(n_dqd_ss_num_R, expect(nR, ρss))
+		push!(n_dqd_ss_ana_R, nR_ana)
+		# push!(α_LR_ss_num, abs((expect(dR' * dL, ρss))))
+		push!(α_LR_ss_num, abs(ket_L' * ρss * ket_R))
+		push!(α_LR_ss_ana, get_dqd_coherence_LR(dqdObj))
+		i = i + 1
+	end
+end
+
+# ╔═╡ 00746111-b97f-4564-8767-6758dc1f3400
+n_dqd_ss_plot_LR = plot(
+	tc_list,
+	[n_dqd_ss_num_L, n_dqd_ss_ana_L, n_dqd_ss_num_R, n_dqd_ss_ana_R, α_LR_ss_num, α_LR_ss_ana],
+	xlabel = L"t_c",
+	ylabel = L"\left< d_\sigma^\dagger d_\sigma' \right>",
+	label = [L"\bar{n}_L^{num}" L"\bar{n}_L^{ana}" L"\bar{n}_R^{num}" L"\bar{n}_R^{ana}" L"|α_{LR}^{num}|" L"|α_{LR}^{ana}|"],
+	linestyle = [:dash :solid :dash :solid :dash :solid],
+	linealpha = [.5, .1, .5, .1, .5, 0.1],
+	color = [:blue :blue :green :green :red :red],
+	xaxis = :log,
+	legend = :right,
+	dpi = 200
+)
+
+# ╔═╡ 5264b7cb-0123-4d5d-b576-dc3a340c6573
+plot(
+	tc_list,
+	[n_dqd_ss_num_L, n_dqd_ss_num_R, α_LR_ss_num],
+	xlabel = L"t_c",
+	ylabel = L"\left< d_\sigma^\dagger d_\sigma' \right>",
+	label = [L"\bar{n}_L^{num}" L"\bar{n}_R^{num}" L"|α_{LR}^{num}|"],
+	linestyle = [:dash :dash :dash],
+	color = [:blue :green :red],
+	xaxis = :log,
+	legend = :right,
+	dpi = 200
+)
+
+# ╔═╡ 982905b9-e7c2-40c5-9e8b-90800128bbd8
+plot(
+	tc_list,
+	[n_dqd_ss_ana_L, n_dqd_ss_ana_R, α_LR_ss_ana],
+	xlabel = L"t_c",
+	ylabel = L"\left< d_\sigma^\dagger d_\sigma' \right>",
+	label = [L"\bar{n}_L^{ana}" L"\bar{n}_R^{ana}" L"|α_{LR}^{ana}|"],
+	linestyle = [:dash :dash :dash],
+	color = [:blue :green :red],
+	xaxis = :log,
+	legend = :right,
+	dpi = 200
+)
 
 # ╔═╡ Cell order:
 # ╠═8ccb7f3a-f245-11f0-a164-31a0d8f97e07
@@ -207,7 +328,14 @@ L_ops[1]
 # ╠═bd44c07d-41bd-40a3-9e60-adfde3269600
 # ╟─23587f58-575a-46fd-ae1f-b818fc208e7f
 # ╠═78ae1607-0877-4a9b-a3a9-000cd8f8edd1
+# ╠═b546be59-30ed-4ce6-b217-0822ca85bafa
 # ╠═eb7a9560-735d-40b5-b387-eea392f3ca80
-# ╠═999cfdc7-f186-4ea4-8678-c7afdcd5c8b4
-# ╠═c6035371-442d-47ea-9928-0b59f20eb7dc
-# ╠═7dcc603f-7726-4884-bcae-ed860628a7a1
+# ╠═e01aedb5-f6f7-4a7e-af82-952b8a715725
+# ╠═9c37cdf9-f718-4e13-82d0-1c6906680e65
+# ╟─4347ffe9-4619-43c2-a676-358ab5d6f17f
+# ╠═d50e14ac-ff1e-4309-a31b-b488d09dc359
+# ╠═d6f22623-1b35-4a83-89eb-10686d758121
+# ╠═b0bc5fb9-1e57-498e-8d6e-32c2285cd70a
+# ╠═00746111-b97f-4564-8767-6758dc1f3400
+# ╠═5264b7cb-0123-4d5d-b576-dc3a340c6573
+# ╠═982905b9-e7c2-40c5-9e8b-90800128bbd8
