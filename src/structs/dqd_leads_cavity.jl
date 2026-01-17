@@ -1,6 +1,7 @@
 export DqdLeadsCavityObj
-export build_dqd_fermi_ops_ge
-export build_dqd_vladder_ops_LR, build_dqd_number_ops_LR
+export build_dqd_fermi_ops_LR 
+export build_dqd_fermi_ops_ge, build_dqd_ladder_ops_ge
+export build_dqd_number_ops_LR
 export build_dqd_σz_op
 export build_cav_a_op
 
@@ -48,27 +49,27 @@ end
 @doc raw"""
 DQD vacuum ladder operators in the left-right basis
 """
-function build_dqd_vladder_ops_LR(dqd::Dqd)
+function build_dqd_fermi_ops_LR(dqd::Dqd)
     if dqd.blockade
         ket_0, ket_L, ket_R = build_dqd_basis_LR(dqd)
-        sL = ket_0 * ket_L'
-        sR = ket_0 * ket_R'
+        dL = ket_0 * ket_L'
+        dR = ket_0 * ket_R'
     else
-        sL = fdestroy(2, 2)
-        sR = fdestroy(2, 1)
+        dL = fdestroy(2, 2)
+        dR = fdestroy(2, 1)
     end
 
-    return sL, sR
+    return dL, dR
 end
-function build_dqd_vladder_ops_LR(dqd_leads_cavity::DqdLeadsCavityObj)
+function build_dqd_fermi_ops_LR(dqd_leads_cavity::DqdLeadsCavityObj)
     dqd = dqd_leads_cavity.dqd_leads.dqd
-    sL_loc, sR_loc = build_dqd_vladder_ops_LR(dqd)
+    dL_loc, dR_loc = build_dqd_fermi_ops_LR(dqd)
     id_cav = build_id_cavity(dqd_leads_cavity.cavity)
 
-    sL = tensor(sL_loc, id_cav)
-    sR = tensor(sR_loc, id_cav)
+    dL = tensor(dL_loc, id_cav)
+    dR = tensor(dR_loc, id_cav)
 
-    return sL, sR
+    return dL, dR
 end
 
 @doc raw"""
@@ -99,42 +100,22 @@ function build_dqd_number_ops_LR(dqd_leads_cavity::DqdLeadsCavityObj)
     return nL, nR
 end
 
-@doc raw"""
-DQD vacuum ladder operators in the ground-excited basis
-"""
-function build_dqd_vladder_ops_ge(dqd::Dqd)
-    sL, sR = build_dqd_vladder_ops_LR(dqd)
-    θ = get_θ(dqd)
-
-    sg = cos(θ/2.) * sL - sin(θ/2.) * sR # |0><g|
-    se = sin(θ/2.) * sL + cos(θ/2.) * sR # |0><e|
-    return sg, se
-end
-function build_dqd_vladder_ops_ge(dqd_leads_cavity::DqdLeadsCavityObj)
-    sg_loc, se_loc = build_dqd_vladder_ops_ge(dqd_leads_cavity.dqd_leads.dqd)
-    id_cav = build_id_cavity(dqd_leads_cavity.cavity)
-
-    sg = tensor(sg_loc, id_cav)
-    se = tensor(se_loc, id_cav)
-
-    return sg, se
-end
 
 @doc raw"""
 DQD ground-excited ladder operators
 """
 function build_dqd_ladder_ops_ge(dqd::Dqd)
-	sg, se = build_dqd_vladder_ops_ge(dqd);
+	sg, se = build_dqd_fermi_ops_ge(dqd);
 
 	σm = sg'*se;
 	σp = se'*sg;
 	return σm, σp
 end
 function build_dqd_ladder_ops_ge(dqd_leads_cavity::DqdLeadsCavityObj)
-    sg, se = build_dqd_vladder_ops_ge(dqd_leads_cavity)
+    sg, se = build_dqd_fermi_ops_ge(dqd_leads_cavity)
 
-	σm = sg'*se;
-	σp = se'*sg;
+	σm = sg' * se;
+	σp = se' * sg;
 	return σm, σp   
 end
 
@@ -142,13 +123,13 @@ end
 DQD σz-operator in the ground-excited basis
 """
 function build_dqd_σz_op(dqd::Dqd)
-    sg, se = build_dqd_vladder_ops_ge(dqd);
+    sg, se = build_dqd_fermi_ops_ge(dqd);
 
     σz = se' * se - sg' * sg;
     return σz
 end
 function build_dqd_σz_op(dqd_leads_cavity::DqdLeadsCavityObj)
-    sg, se = build_dqd_vladder_ops_ge(dqd_leads_cavity)
+    sg, se = build_dqd_fermi_ops_ge(dqd_leads_cavity)
 
     σz = se' * se - sg' * sg;
     return σz
@@ -160,15 +141,14 @@ DQD fermionic operators in the ground-excited basis
 """
 function build_dqd_fermi_ops_ge(dqd::Dqd)
     θ = get_θ(dqd)
-    dL = fdestroy(2, 1);
-    dR = fdestroy(2, 2);
+    dL, dR = build_dqd_fermi_ops_LR(dqd)
 
     dg = cos(θ) * dL - sin(θ) * dR
     de = sin(θ) * dL + cos(θ) * dR
     return dg, de
 end
 function build_dqd_fermi_ops_ge(dqd_leads_cavity::DqdLeadsCavityObj)
-    dg0, de0 = build_dqd_fermi_ops_ge(dqd_leads_cavity.dqd_leads_cavity.dqd)
+    dg0, de0 = build_dqd_fermi_ops_ge(dqd_leads_cavity.dqd_leads.dqd)
     id_cav = build_id_cavity(dqd_leads_cavity.cavity)
 
     dg, de = tensor(dg0, id_cav), tensor(de0, id_cav)

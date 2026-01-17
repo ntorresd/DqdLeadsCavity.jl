@@ -9,7 +9,7 @@ function build_H_dqd_LR(dqd::Dqd)
     ϵL, ϵR = get_onsite_energies(dqd)
 
     # Operators
-    dL, dR = dqd.blockade ? build_dqd_vladder_ops_LR(dqd) : (fdestroy(2, 1), fdestroy(2, 2))
+    dL, dR = build_dqd_fermi_ops_LR(dqd)
 
     # Hamiltonian: on-site + tunneling
     H = ϵL * dL' * dL + ϵR * dR' * dR + dqd.tc * (dL' * dR + dR' * dL)
@@ -34,7 +34,7 @@ end
 DQD Hamiltonian in the g-e parametrization
 """
 function build_H_dqd_ge(dqd::Dqd)
-    dg, de = dqd.blockade ? build_dqd_vladder_ops_ge(dqd) : build_dqd_fermi_ops_ge(dqd)
+    dg, de = build_dqd_fermi_ops_ge(dqd)
     ϵg, ϵe = get_eigen_energies(dqd)
     H = (ϵg * dg' * dg) + (ϵe * de' * de)
 
