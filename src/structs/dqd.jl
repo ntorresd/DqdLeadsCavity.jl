@@ -16,18 +16,26 @@ mutable struct Dqd
     blockade::Bool
 end
 
+# --- DQD Constructors ---
+# No Coulomb blockade constructor
 function Dqd(Δϵ::Real, ϵ_avg::Real, tc::Real, γm::Real, γϕ::Real, U::Real)
     return Dqd(Δϵ, ϵ_avg, tc, γm, γϕ, U, false)
 end
-
+# Coulomb blockade constructor
 function Dqd(Δϵ::Real, ϵ_avg::Real, tc::Real, γm::Real, γϕ::Real)
     return Dqd(Δϵ, ϵ_avg, tc, γm::Real, γϕ::Real, Inf, true)
 end
 
 function Base.show(io::IO, dqd::Dqd)
+    ϵL, ϵR = get_onsite_energies(dqd)
+    ϵg, ϵe = get_eigen_energies(dqd)
     print(io,
         "Δϵ = $(dqd.Δϵ)\n",
         "ϵ_avg = $(dqd.ϵ_avg)\n",
+        "ϵL = $(ϵL)\n",
+        "ϵR = $(ϵR)\n",
+        "ϵg = $(ϵg)\n",
+        "ϵe = $(ϵe)\n",
         "tc = $(dqd.tc)\n",
         "γm = $(dqd.γm)\n",
         "γϕ = $(dqd.γϕ)\n",
