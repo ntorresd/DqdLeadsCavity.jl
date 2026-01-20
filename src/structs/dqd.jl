@@ -61,10 +61,13 @@ function get_Ω(dqd::Dqd)
 end
 
 @doc raw"""
-DQD mixing angle in the g-e basis
+DQD mixing angle in the g-e basis. 
+Sign convention follows [Zenelaj2022] (ϵL < ϵR).
 """
 function get_θ(dqd::Dqd)
-    θ = acos(- dqd.Δϵ / get_Ω(dqd))
+    θ = acos(- dqd.Δϵ / get_Ω(dqd)) # [Zenelaj2022]
+    # θ = atan(2 * dqd.tc, -dqd.Δϵ) # [Agarwalla2019]
+
     return θ
 end
 
@@ -130,10 +133,14 @@ function build_dqd_basis_ge(dqd::Dqd)
     dim = get_dim(dqd)
     if dqd.blockade
         θ = get_θ(dqd)
-        ket_0, ket_L, ket_R = build_dqd_basis_LR(dqd)
+        # ket_0, ket_L, ket_R = build_dqd_basis_LR(dqd)
+        ket_0 = basis(dim, 0)
+        dg, de = build_dqd_fermi_ops_ge(dqd)
         # DQD basis
-        ket_g = cos(θ/2.) * ket_L + sin(θ/2.) * ket_R
-        ket_e = -sin(θ/2.) * ket_L + cos(θ/2.) * ket_R
+        # ket_g = cos(θ/2.) * ket_L + sin(θ/2.) * ket_R
+        # ket_e = -sin(θ/2.) * ket_L + cos(θ/2.) * ket_R
+        ket_g = dg' * ket_0
+        ket_e = de' * ket_0
 
         return ket_0, ket_g, ket_e
     else
