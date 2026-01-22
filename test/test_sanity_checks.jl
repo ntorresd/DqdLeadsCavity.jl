@@ -49,7 +49,7 @@ end
 end
 
 @testset "Test DQD Hamiltonian in the L-R basis (blockade)" begin
-    dqd = Dqd(0.5, 0.1, 1., 0., 0.)
+    dqd = Dqd(0.5, 0.2, 1., 0., 0.)
     ket_0, ket_L, ket_R = build_dqd_basis_LR(dqd)
     H_dqd_LR = build_H_dqd_LR(dqd)
     ϵg, ϵe = get_eigen_energies(dqd)
@@ -60,28 +60,31 @@ end
 end
 
 @testset "Test DQD Hamiltonian in the g-e basis (blockade)" begin
-    dqd = Dqd(0.5, 0.1, 1., 0., 0.)
+    dqd = Dqd(0.5, 0.2, 1., 0., 0.)
     ket_0, ket_g, ket_e = build_dqd_basis_ge(dqd)
     H_dqd_ge = build_H_dqd_ge(dqd)
+    H_dqd_LR = build_H_dqd_LR(dqd)
     ϵg, ϵe = get_eigen_energies(dqd)
     θ = get_θ(dqd)
     
-    @test rad2deg(θ) ≈ rad2deg(acos(- dqd.Δϵ / get_Ω(dqd)))
+    @test rad2deg(θ) ≈ rad2deg(acos(dqd.Δϵ / get_Ω(dqd)))
     @test rad2deg(θ) ≈ rad2deg(atan(2 * dqd.tc, dqd.Δϵ))
     @test H_dqd_ge * ket_g ≈ ϵg * ket_g
     @test H_dqd_ge * ket_e ≈ ϵe * ket_e
     @test H_dqd_ge ≈ ϵg * ket_g * ket_g' + ϵe * ket_e * ket_e'
-    @test H_dqd_ge.data ≈ build_H_dqd_LR(dqd).data
+    @test H_dqd_ge.data ≈ H_dqd_LR.data
 end
 
 @testset "Test DQD Hamiltonian in the g-e basis (no-blockade)" begin
     dqd = Dqd(1., 0.3, 1.1, 0., 0., 0.)
     ket_0, ket_g, ket_e, ket_ge = build_dqd_basis_ge(dqd)
+    dg, de = build_dqd_fermi_ops_ge(dqd)
     H_dqd_ge = build_H_dqd_ge(dqd)
+    H_dqd_LR = build_H_dqd_LR(dqd)
     ϵg, ϵe = get_eigen_energies(dqd)
 
     @test H_dqd_ge * ket_g ≈ ϵg * ket_g
     @test H_dqd_ge * ket_e ≈ ϵe * ket_e
-    @test H_dqd_ge ≈ ϵg * ket_g * ket_g' + ϵe * ket_e * ket_e'
+    @test H_dqd_ge ≈ ϵg * dg' * dg + ϵe * de' * de
     @test H_dqd_ge ≈ build_H_dqd_LR(dqd)
 end

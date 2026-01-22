@@ -35,8 +35,8 @@ DQD Hamiltonian in the g-e parametrization
 """
 function build_H_dqd_ge(dqd::Dqd)
     dg, de = build_dqd_fermi_ops_ge(dqd)
-    ϵg, ϵe = get_eigen_energies(dqd)
-    H = (ϵg * dg' * dg) + (ϵe * de' * de)
+    ϵg, ϵe = get_eigen_energies(dqd)    
+    H =  (ϵe * de' * de) + (ϵg * dg' * dg) # [eq. (A20) Prech2023]
 
     # Add non-linear term for finite Coulomb interaction
     H = dqd.blockade ? H : H + (dqd.U * dg' * dg * de' * de)
