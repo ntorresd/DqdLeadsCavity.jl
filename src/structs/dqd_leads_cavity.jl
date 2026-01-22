@@ -143,8 +143,8 @@ function build_dqd_fermi_ops_ge(dqd::Dqd)
     θ = get_θ(dqd)
     dL, dR = build_dqd_fermi_ops_LR(dqd)
 
-    dg = cos(θ) * dL - sin(θ) * dR
-    de = sin(θ) * dL + cos(θ) * dR
+    dg = cos(θ / 2.) * dL - sin(θ / 2.) * dR
+    de = sin(θ / 2.) * dL + cos(θ / 2.) * dR
     return dg, de
 end
 function build_dqd_fermi_ops_ge(dqd_leads_cavity::DqdLeadsCavityObj)
