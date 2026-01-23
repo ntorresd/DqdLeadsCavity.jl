@@ -9,6 +9,7 @@ mutable struct DqdLeads
 end
 
 function Base.show(io::IO, dqd_leads::DqdLeads)
+    μL, μR = get_chemical_potentials(dqd_leads.leads)
     print(io,
         "Δϵ = $(dqd_leads.dqd.Δϵ)\n",
         "ϵ_avg = $(dqd_leads.dqd.ϵ_avg)\n",
@@ -21,6 +22,8 @@ function Base.show(io::IO, dqd_leads::DqdLeads)
         "TR = $(dqd_leads.leads.TR)\n",
         "Δμ = $(dqd_leads.leads.Δμ)\n",
         "μ_avg = $(dqd_leads.leads.μ_avg)\n",
+        "μL = $μL\n",
+        "μR = $μR\n",
         "ΓL = $(dqd_leads.ΓL)\n",
         "ΓR = $(dqd_leads.ΓR)\n"
     )
