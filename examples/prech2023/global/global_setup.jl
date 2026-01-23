@@ -1,6 +1,6 @@
-using QuantumToolbox
 using Revise, DqdLeadsCavity
 
+run_plots = true
 # Setup
 begin
 	# Leads

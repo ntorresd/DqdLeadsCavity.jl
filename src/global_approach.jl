@@ -23,7 +23,6 @@ Coupling strengths for the global approach according to [eq. (89) Potts2021]
 """
 function get_coupling_strengths_gl(dqd_leads::DqdLeads)
 	θ = get_θ(dqd_leads.dqd)
-	# sθ2, cθ2 = sin(θ / 2.)^2, cos(θ / 2.)^2
 	cθ2, sθ2 = sin(θ / 2.)^2, cos(θ / 2.)^2
 	
 	ΓL, ΓR = dqd_leads.ΓL, dqd_leads.ΓR
