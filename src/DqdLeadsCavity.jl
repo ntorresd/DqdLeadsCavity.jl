@@ -25,5 +25,7 @@ include("currents_thcl.jl")
 include("currents_thcg.jl")
 include("currents_output.jl")
 
+# Global approach
+include("global_approach.jl")
 
 end
