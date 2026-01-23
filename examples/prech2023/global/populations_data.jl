@@ -30,7 +30,7 @@ begin
 		dg, de = build_dqd_fermi_ops_ge(dqdObj.dqd)
 		ng, ne = dg' * dg, de' * de
 
-		ng_ana, ne_ana = get_dqd_occupation_ge(dqdObj)
+		ng_ana, ne_ana = get_dqd_occupation_ge_gl(dqdObj)
 
 		push!(n_dqd_ss_num_g, expect(ng, ρss))
 		push!(n_dqd_ss_ana_g, ng_ana)
@@ -61,14 +61,14 @@ begin
 		nL, nR = dL' * dL, dR' * dR
 		ket_0, ket_L, ket_R, ket_D = build_dqd_basis_LR(dqdObj.dqd)
 
-		nL_ana, nR_ana = get_dqd_occupation_LR(dqdObj)
+		nL_ana, nR_ana = get_dqd_occupation_LR_gl(dqdObj)
 		push!(n_dqd_ss_num_L, expect(nL, ρss))
 		push!(n_dqd_ss_ana_L, nL_ana)
 		push!(n_dqd_ss_num_R, expect(nR, ρss))
 		push!(n_dqd_ss_ana_R, nR_ana)
 		# push!(α_LR_ss_num, abs((expect(dR' * dL, ρss))))
 		push!(α_LR_ss_num, abs(ket_L' * ρss * ket_R))
-		push!(α_LR_ss_ana, get_dqd_coherence_LR(dqdObj))
+		push!(α_LR_ss_ana, get_dqd_coherence_LR_gl(dqdObj))
 		i = i + 1
 	end
 end
