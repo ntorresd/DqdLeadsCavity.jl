@@ -19,13 +19,15 @@ function get_fermi_factors_gl(dqd_leads::DqdLeads)
 end
 
 @doc raw"""
-Coupling strengths for the global approach according to [eq. (89) Potts2021]
+Coupling strengths for the global approach according to
+[eq. (A24) Prech2023] ≡ [eq. (89) Potts2021]
 """
 function get_coupling_strengths_gl(dqd_leads::DqdLeads)
 	θ = get_θ(dqd_leads.dqd)
-	cθ2, sθ2 = sin(θ / 2.)^2, cos(θ / 2.)^2
+	cθ2, sθ2 = cos(θ / 2.)^2, sin(θ / 2.)^2
 	
 	ΓL, ΓR = dqd_leads.ΓL, dqd_leads.ΓR
+	# [eq. (A24) Prech2023] ≡ [eq. (89) Potts2021]
 	ΓLg, ΓLe = ΓL * sθ2, ΓL * cθ2
 	ΓRg, ΓRe = ΓR * cθ2, ΓR * sθ2
 
@@ -119,7 +121,10 @@ function get_particle_current_gl(dqd_leads::DqdLeads)
 	ΓLg, ΓLe, ΓRg, ΓRe = get_coupling_strengths_gl(dqd_leads)
 	fLg, fLe, fRg, fRe = get_fermi_factors_gl(dqd_leads)
 
-    I = (fLg - fRg) * ΓLg * ΓRg / (ΓLg + ΓRg) + (fLe - fRe) * ΓLe * ΓRe / (ΓLe + ΓRe)
+    I_L = (fLg - fRg) * ΓLg * ΓRg / (ΓLg + ΓRg) + (fLe - fRe) * ΓLe * ΓRe / (ΓLe + ΓRe)
+	I_R = (fRg - fLg) * ΓRg * ΓLg / (ΓRg + ΓLg) + (fRe - fLe) * ΓRe * ΓLe / (ΓRe + ΓLe)
+
+	return I_L, I_R
 end
 
 ## Steady state heat currents
@@ -137,10 +142,10 @@ function get_heat_current_gl(dqd_leads::DqdLeads)
 	Γg = ΓLg * ΓRg / (ΓLg + ΓRg)
 	Γe = ΓLe * ΓRe / (ΓLe + ΓRe)
 
-	JLg = (ϵg - μL) * (fLg - fRe) * Γg
+	JLg = (ϵg - μL) * (fLg - fRg) * Γg
 	JLe = (ϵe - μL) * (fLe - fRe) * Γe
 
-	JRg = (ϵg - μR) * (fRg - fLe) * Γg
+	JRg = (ϵg - μR) * (fRg - fLg) * Γg
 	JRe = (ϵe - μR) * (fRe - fLe) * Γe
 
 	return JLg + JLe, JRg + JRe
