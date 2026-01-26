@@ -25,8 +25,8 @@ function Base.show(io::IO, leads::Leads)
 end
 
 function get_chemical_potentials(leads::Leads)
-    μL = leads.μ_avg + leads.Δμ
-    μR = leads.μ_avg - leads.Δμ
+    μL = leads.μ_avg + leads.Δμ / 2.
+    μR = leads.μ_avg - leads.Δμ / 2.
 
     return μL, μR
 end
