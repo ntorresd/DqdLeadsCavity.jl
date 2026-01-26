@@ -9,7 +9,7 @@ Fermi factors for the global approach [Potts2021]
 """
 function get_fermi_factors_gl(dqd_leads::DqdLeads)
 	ϵg, ϵe = get_eigen_energies(dqd_leads.dqd)
-	μL, μR = get_chemical_potentials(dqd_leads.leads)
+	μL, μR = get_chemical_potentials(dqd_leads)
 	TL, TR = dqd_leads.leads.TL, dqd_leads.leads.TR
 
 	fLg, fLe = fermi(ϵg, μL, TL), fermi(ϵe, μL, TL)
@@ -137,7 +137,7 @@ function get_heat_current_gl(dqd_leads::DqdLeads)
 	ΓLg, ΓLe, ΓRg, ΓRe = get_coupling_strengths_gl(dqd_leads)
 	fLg, fLe, fRg, fRe = get_fermi_factors_gl(dqd_leads)
 	ϵg, ϵe = get_eigen_energies(dqd_leads.dqd)
-	μL, μR = get_chemical_potentials(dqd_leads.leads)
+	μL, μR = get_chemical_potentials(dqd_leads)
 
 	Γg = ΓLg * ΓRg / (ΓLg + ΓRg)
 	Γe = ΓLe * ΓRe / (ΓLe + ΓRe)

@@ -27,7 +27,7 @@ end
 Particle current integrand for NEGFs approach
 """
 function _integrand_particle_current_avg_neqgf(ω, dqd_leads::DqdLeads; left::Bool = true)
-    μL, μR = get_chemical_potentials(dqd_leads.leads)
+    μL, μR = get_chemical_potentials(dqd_leads)
 
     Tω = _transmission_dqd(ω, dqd_leads)
     fL = fermi(ω, μL, dqd_leads.leads.TL)
@@ -61,7 +61,7 @@ end
 Particle current integrand for NEGFs approach
 """
 function _integrand_heat_current_neqgf(ω::Real, μ::Real, dqd_leads::DqdLeads; left::Bool = true)
-    μL, μR = get_chemical_potentials(dqd_leads.leads)
+    μL, μR = get_chemical_potentials(dqd_leads)
 
     Tω = _transmission_dqd(ω, dqd_leads)
     fL = fermi(ω, μL, dqd_leads.leads.TL)
@@ -79,7 +79,7 @@ according to eq. (B.3) [Potts et. al. 2021])
 - `I_avg::Real`
 """
 function get_current_heat_neqgf(dqd_leads::DqdLeads)
-    μL, μR = get_chemical_potentials(dqd_leads.leads)
+    μL, μR = get_chemical_potentials(dqd_leads)
 
     integrand_L(ω) = _integrand_heat_current_neqgf(ω, μL, dqd_leads; left = true)
     integrand_R(ω) = _integrand_heat_current_neqgf(ω, μR, dqd_leads; left = false)
