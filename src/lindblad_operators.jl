@@ -1,32 +1,5 @@
-export build_L_ops_local_LR, build_L_ops_semilocal_LR
+export build_L_ops_semilocal_LR
 export build_L_ops_thcg_int
-
-
-@doc raw"""
-Lindblad operators corresponding to the local LME evaluating
-the fermi distributions at the corresponding on-site energies.
-"""
-function build_L_ops_local_LR(dqd_leads::DqdLeads)
-    # Parameters
-    ϵL, ϵR = get_onsite_energies(dqd_leads.dqd)
-    μL, μR = get_chemical_potentials(dqd_leads.leads)
-
-    # Fermi functions
-    fL = fermi(ϵL, μL, dqd_leads.leads.TL)
-    fR = fermi(ϵR, μR, dqd_leads.leads.TR)
-
-    # Creation and annihilation operators 
-    dL, dR = build_dqd_fermi_ops_LR(dqd_leads.dqd)
-
-    # Lindblad jump operators (lead-dot tunneling)
-    L_ops = [
-        sqrt(dqd_leads.ΓL * fL) * dL',
-        sqrt(dqd_leads.ΓL * (1 - fL)) * dL,
-        sqrt(dqd_leads.ΓR * fR) * dR',
-        sqrt(dqd_leads.ΓR * (1 - fR)) * dR
-    ]
-    return L_ops
-end
 
 @doc raw"""
 Lindblad operators corresponding to the semi-local LME evaluating

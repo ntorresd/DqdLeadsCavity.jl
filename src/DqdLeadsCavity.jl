@@ -20,9 +20,10 @@ include("hamiltonians.jl")
 include("lindblad_operators.jl")
 
 # Currents
-include("currents_thcl.jl")
 include("currents_output.jl")
 
+# Local approach
+include("local_approach.jl")
 # Global approach
 include("global_approach.jl")
 # Non-equilibrium Green's function approach
