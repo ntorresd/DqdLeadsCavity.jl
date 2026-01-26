@@ -62,7 +62,7 @@ end
 
 @doc raw"""
 DQD mixing angle in the g-e basis. 
-Sign convention follows [Zenelaj2022] (ϵL < ϵR).
+Sign convention follows [Prech2023] (ϵL < ϵR).
 """
 function get_θ(dqd::Dqd)
     # θ = acos(- dqd.Δϵ / get_Ω(dqd)) # [Zenelaj2022]
