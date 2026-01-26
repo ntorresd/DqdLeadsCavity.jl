@@ -1,10 +1,9 @@
 using QuantumToolbox
 
 begin
-	tc_list = logrange(1e-3, 1e1, 1000);
 	dqdObj = deepcopy(dqd_leads)
 	ρss_list = []
-	for tc in tc_list
+	for tc in tc_range
 		dqdObj.dqd.tc = tc
 		ρss = steadystate(
 			build_H_dqd_ge(dqdObj.dqd),
@@ -25,14 +24,14 @@ begin
 	α_ge_num_gl = []
 	α_ge_ana_gl = []
 	local i = 1
-	for tc in tc_list
+	for tc in tc_range
 		dqdObj.dqd.tc = tc
-		ρss = ρss_list[i]
+		local ρss = ρss_list[i]
 
-		dg, de = build_dqd_fermi_ops_ge(dqdObj.dqd)
-		ng, ne = dg' * dg, de' * de
+		local dg, de = build_dqd_fermi_ops_ge(dqdObj.dqd)
+		local ng, ne = dg' * dg, de' * de
 
-		ng_ana, ne_ana = get_dqd_occupation_ge_gl(dqdObj)
+		local ng_ana, ne_ana = get_dqd_occupation_ge_gl(dqdObj)
 
 		push!(n_dqd_num_g_gl, expect(ng, ρss))
 		push!(n_dqd_ana_g_gl, ng_ana)
@@ -55,7 +54,7 @@ begin
 	α_LR_ss_num = []
 	α_LR_ss_ana = []
 	local i = 1
-	for tc in tc_list
+	for tc in tc_range
 		dqdObj.dqd.tc = tc
 		ρss = ρss_list[i]
 
