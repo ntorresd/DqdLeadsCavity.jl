@@ -24,7 +24,6 @@ begin
     for tc in tc_range
         dqdObj.dqd.tc = tc
         local μL, μR = get_chemical_potentials(dqdObj.leads)
-        local H_dqd = build_H_dqd_LR(dqdObj.dqd)
         local dL, dR = build_dqd_fermi_ops_LR(dqdObj.dqd)
         local N_op = dL' * dL + dR' * dR
         local L_ops = build_L_ops_dqd_gl(dqdObj)
