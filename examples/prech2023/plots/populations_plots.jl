@@ -3,7 +3,7 @@ using LaTeXStrings
 Plots.pythonplot()
 
 n_dqd_plot_ge = Plots.plot(
-	tc_list,
+	tc_range,
 	[n_dqd_num_g_gl, n_dqd_ana_g_gl, n_dqd_num_e_gl, n_dqd_ana_e_gl, α_ge_num_gl, α_ge_ana_gl],
 	xlabel = L"t_c",
 	ylabel = L"\left< d_\sigma^\dagger d_\sigma' \right>",
@@ -12,12 +12,12 @@ n_dqd_plot_ge = Plots.plot(
 	linealpha = [0.7, 0.3, .7, 0.3, .7, 0.3],
 	color = [:blue :blue :green :green :red :red],
 	xaxis = :log,
-	legend = :topright,
+	legend = :topleft,
 	dpi = 200
 );
 
 n_dqd_plot_LR = Plots.plot(
-	tc_list,
+	tc_range,
 	[n_dqd_num_L_gl, n_dqd_ana_L_gl, n_dqd_num_R_gl, n_dqd_ana_R_gl, α_LR_ss_num, α_LR_ss_ana],
 	xlabel = L"t_c",
 	ylabel = L"\left< d_\alpha^\dagger d_\alpha \right>",
@@ -26,7 +26,7 @@ n_dqd_plot_LR = Plots.plot(
 	linealpha = [0.7, 0.3, .7, 0.3, .7, 0.3],
 	color = [:blue :blue :green :green :red :red],
 	xaxis = :log,
-	legend = :topright,
+	legend = :left,
     dpi = 350
 );
 
