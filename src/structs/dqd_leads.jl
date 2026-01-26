@@ -1,4 +1,5 @@
 export DqdLeads
+export get_chemical_potentials
 export get_transition_rates_ge, get_fermi_ge
 
 mutable struct DqdLeads
@@ -9,7 +10,7 @@ mutable struct DqdLeads
 end
 
 function Base.show(io::IO, dqd_leads::DqdLeads)
-    μL, μR = get_chemical_potentials(dqd_leads.leads)
+    μL, μR = get_chemical_potentials(dqd_leads)
     print(io,
         "Δϵ = $(dqd_leads.dqd.Δϵ)\n",
         "ϵ_avg = $(dqd_leads.dqd.ϵ_avg)\n",
@@ -33,6 +34,15 @@ function get_onsite_energies(dqd_leads::DqdLeads)
     return get_onsite_energies(dqd_leads.dqd)
 end
 
+@doc raw"""
+Calculates chemical potentials of the leads
+"""
+function get_chemical_potentials(leads::Leads)
+    μL = leads.μ_avg + leads.Δμ / 2.
+    μR = leads.μ_avg - leads.Δμ / 2.
+
+    return μL, μR
+end
 function get_chemical_potentials(dqd_leads::DqdLeads)
     return get_chemical_potentials(dqd_leads.leads)
 end
@@ -40,7 +50,7 @@ end
 function get_transition_rates_ge(dqd_leads::DqdLeads; side::Any = false)
     # Parameters
     ϵg, ϵe = get_eigen_energies(dqd_leads.dqd)
-    μL, μR = get_chemical_potentials(dqd_leads.leads)
+    μL, μR = get_chemical_potentials(dqd_leads)
     TL, TR = dqd_leads.leads.TL, dqd_leads.leads.TR
     ΓL = dqd_leads.ΓL
     ΓR = dqd_leads.ΓR
@@ -86,7 +96,7 @@ end
 
 function get_fermi_ge(dqd_leads::DqdLeads)
     ϵg, ϵe = get_eigen_energies(dqd_leads.dqd)
-    μL, μR = get_chemical_potentials(dqd_leads.leads)
+    μL, μR = get_chemical_potentials(dqd_leads)
     TL, TR = dqd_leads.leads.TL, dqd_leads.leads.TR
 
     # fLg, fLe, fRg, fRe

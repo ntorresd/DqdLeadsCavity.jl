@@ -13,7 +13,7 @@ function build_L_ops_semilocal_LR(dqd_leads::DqdLeads)
     )
     # Parameters
     ϵL, ϵR = get_onsite_energies(dqd_leads.dqd)
-    μL, μR = get_chemical_potentials(dqd_leads.leads)
+    μL, μR = get_chemical_potentials(dqd_leads)
     ΓL = dqd_leads.ΓL; ΓR = dqd_leads.ΓR
     U = dqd_leads.dqd.U
 
