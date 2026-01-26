@@ -1,6 +1,6 @@
 export get_fermi_factors_gl, get_coupling_strengths_gl
 export build_L_ops_dqd_gl
-export get_dqd_occupation_ge_gl, get_dqd_occupation_LR_gl, get_dqd_coherence_LR_gl
+export get_occupation_ge_gl, get_occupation_LR_gl, get_coherence_LR_gl
 export get_particle_current_gl
 export get_heat_current_gl
 
@@ -73,7 +73,7 @@ end
 Analytical steady-state solution for the occupation of the DQD grond/excited state
 according to the global approach[eq. (A27) Prech2023]
 """
-function get_dqd_occupation_ge_gl(dqd_leads::DqdLeads)
+function get_occupation_ge_gl(dqd_leads::DqdLeads)
 	ΓLg, ΓLe, ΓRg, ΓRe = get_coupling_strengths_gl(dqd_leads)
 	fLg, fLe, fRg, fRe = get_fermi_factors_gl(dqd_leads)
 
@@ -89,11 +89,11 @@ end
 Analytical steady-state solution for the occupation of the DQD left and right states
 according to global approach [eq. (A28) Prech2023]
 """
-function get_dqd_occupation_LR_gl(dqd_leads::DqdLeads)
+function get_occupation_LR_gl(dqd_leads::DqdLeads)
 	θ = get_θ(dqd_leads.dqd)
 	cθ2, sθ2 = cos(θ / 2.)^2, sin(θ / 2.)^2
 	
-	ng, ne = get_dqd_occupation_ge_gl(dqd_leads)
+	ng, ne = get_occupation_ge_gl(dqd_leads)
 	
 	nL = cθ2 * ng + sθ2 * ne
 	nR = sθ2 * ng + cθ2 * ne
@@ -104,9 +104,9 @@ end
 @doc raw"""
 Analytical steady-state solution for the coherence between the ground and excited levels of the DQD according to the global approach [eq. (A29) Prech2023]
 """
-function get_dqd_coherence_LR_gl(dqd_leads::DqdLeads)
+function get_coherence_LR_gl(dqd_leads::DqdLeads)
 	θ = get_θ(dqd_leads.dqd)
-	ng, ne = get_dqd_occupation_ge_gl(dqd_leads)
+	ng, ne = get_occupation_ge_gl(dqd_leads)
 	α_abs = abs(sin(θ/2.) * cos(θ/2.) * (ng - ne))
 	return(α_abs)
 end
@@ -114,8 +114,8 @@ end
 # Heat and particle currents
 ## Steady state particle currents
 @doc raw"""
-Analytical steady-state solution for the particle current
-according to the global approach [eq. (A31) Prech2023] 
+Analytical steady-state particle current for the non-interacting DQD
+according to the global approach [eq. (A31) Prech2023]
 """
 function get_particle_current_gl(dqd_leads::DqdLeads)
 	ΓLg, ΓLe, ΓRg, ΓRe = get_coupling_strengths_gl(dqd_leads)
