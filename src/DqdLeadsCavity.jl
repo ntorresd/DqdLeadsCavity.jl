@@ -21,7 +21,6 @@ include("lindblad_operators.jl")
 
 # Currents
 include("currents_thcl.jl")
-include("currents_thcg.jl")
 include("currents_output.jl")
 
 # Global approach
