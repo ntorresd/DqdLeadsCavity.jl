@@ -2,7 +2,7 @@ using Revise, DqdLeadsCavity
 
 run_plots = true
 N_points = 10000
-tc_range = logrange(0.01, 1000, N_points);
+tc_range = logrange(0.01, 1e3, N_points);
 # Setup
 begin
 	# Leads
@@ -16,7 +16,7 @@ begin
 	# DQD parameters
 	local Δϵ = 0. * Γ
 	local ϵ_avg = 0.0
-	local tc = 6.5
+	local tc = 0.0
 	local U = 0.0
 	
 	local γm = 0.			# Relaxation rate
