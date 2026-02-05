@@ -19,9 +19,8 @@ include("utilities.jl")
 include("hamiltonians.jl")
 include("lindblad_operators.jl")
 
-# Currents
-include("currents_output.jl")
-
+# Numeric approach
+include("numeric_approach.jl")
 # Local approach
 include("local_approach.jl")
 # Global approach

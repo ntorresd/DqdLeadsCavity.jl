@@ -1,11 +1,22 @@
+N_points = 10000
+tc_range = logrange(0.01, 1e3, N_points);
+
 begin
     local tc_max = maximum(tc_range)
-    dqdObj = deepcopy(dqd_leads)
-    results = map(tc_range) do tc
-        dqdObj.dqd.tc = tc
-        get_current_heat_neqgf(dqdObj; int_lims = (-10. * tc_max, 10. * tc_max))   # (J_L, J_R)
-    end
+    local int_lims = (-10. * tc_max, 10. * tc_max);
+    dqdObj = deepcopy(dqd_leads);
 
-    J_L_neqgf = first.(results)
-    J_R_neqgf = last.(results)
+    J_L_neqgf = [];
+    J_R_neqgf = [];
+    for tc in tc_range
+        dqdObj.dqd.tc = tc
+        push!(
+            J_L_neqgf,
+            get_current_heat_neqgf(dqdObj; int_lims = int_lims, left = true)
+        )
+        push!(
+            J_R_neqgf,
+            get_current_heat_neqgf(dqdObj; int_lims = int_lims, left = false)
+        )
+    end
 end
