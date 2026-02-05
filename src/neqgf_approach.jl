@@ -7,8 +7,6 @@ Transmission function of the DQD under the wideband approximation
 
 # Arguments
 - `ω::Real`: Energy (integration variable)
-
-See also: [`build_dqd_leads`](@ref) and [`get_particle_current_neqgf`](@ref)
 """
 function _transmission_dqd(ω, dqd_leads::DqdLeads)
     ϵL, ϵR = get_onsite_energies(dqd_leads.dqd)

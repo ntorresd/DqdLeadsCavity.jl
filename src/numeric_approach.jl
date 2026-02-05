@@ -96,8 +96,6 @@ Calculate the average of the output stochastic current according to eq. (40) of 
 # Keyword Arguments
 - `ν_vec::Vector{Int64}`: Weights corresponding to each Lindblad operator in `L_ops`
 
-See also: [`build_L_ops_local`](@ref), [`build_L_ops_semilocal`](@ref)
-
 # Returns
 - `I_avg::Float64`: Output average stochastic current 
 """
