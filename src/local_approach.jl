@@ -30,12 +30,24 @@ function build_L_ops_dqd_loc(dqd_leads::DqdLeads)
 	]
 	return L_ops
 end
+function build_L_ops_dqd_loc(dqd_leads_cavity::DqdLeadsCavityObj)
+    ΓL, ΓR = dqd_leads_cavity.dqd_leads.ΓL, dqd_leads_cavity.dqd_leads.ΓR
+    fL, fR = get_fermi_factors_loc(dqd_leads_cavity.dqd_leads)
+	dL, dR = build_dqd_fermi_ops_LR(dqd_leads_cavity)
+	
+	L_ops = [
+		sqrt(ΓL * fL) * dL', sqrt(ΓL * (1. - fL)) * dL,
+		sqrt(ΓR * fR) * dR', sqrt(ΓR * (1. - fR)) * dR
+	]
+	return L_ops
+end
 
 @doc raw"""
 Analytical steady-state particle current for the non-interacting DQD
-according to the local approach[eq. (A12) Prech2023]
+according to the local approach[eq. (A12) Prech2023].
+Due to conservation of particles I_R = -I_L
 """
-function get_particle_current_loc(dqd_leads::DqdLeads)
+function get_particle_current_loc(dqd_leads::DqdLeads; left::Bool = true)
     # Parameters
     tc = dqd_leads.dqd.tc
     ϵ_avg = dqd_leads.dqd.ϵ_avg
@@ -43,20 +55,21 @@ function get_particle_current_loc(dqd_leads::DqdLeads)
     μL, μR = get_chemical_potentials(dqd_leads)
     TL, TR = dqd_leads.leads.TL, dqd_leads.leads.TR
     ΓL, ΓR = dqd_leads.ΓL, dqd_leads.ΓR
-
+    # Fermi factors
     fL = fermi(ϵ_avg, μL, TL)
     fR = fermi(ϵ_avg, μR, TR)
-
+    # current
+    _side = left ? 1. : -1.
     numerator = 4 * tc^2 * (ΓL * ΓR) * (ΓL + ΓR)
     denominator = (ΓL + ΓR)^2 * (4. * tc^2 + (ΓL * ΓR) + 4. * (ΓL * ΓR) * Δϵ^2)
-    return (fL - fR) * numerator / denominator, (fR - fL) * numerator / denominator
+    return _side * (fL - fR) * numerator / denominator
 end
 
 @doc raw"""
 Aalytical steady-state heat current through the non-interacting DQD
 according to the local approach [eq. (B.6) Potts et. al. 2021]
 """
-function get_heat_current_loc(dqd_leads::DqdLeads)
+function get_heat_current_loc(dqd_leads::DqdLeads; left::Bool = true)
     # Parameters
     ϵ_avg = dqd_leads.dqd.ϵ_avg
     Δϵ = dqd_leads.dqd.Δϵ
@@ -64,18 +77,15 @@ function get_heat_current_loc(dqd_leads::DqdLeads)
     ΓL, ΓR = dqd_leads.ΓL, dqd_leads.ΓR
     μL, μR = get_chemical_potentials(dqd_leads)
     TL, TR = dqd_leads.leads.TL, dqd_leads.leads.TR
-
+    # Fermi factors
     fL = fermi(ϵ_avg, μL, TL)
     fR = fermi(ϵ_avg, μR, TR)
-
-    factor_L = (ϵ_avg - μL) * (fL - fR)
-    factor_R = (ϵ_avg - μR) * (fR - fL)
-
+    factor = left ? (ϵ_avg - μL) * (fL - fR) : (ϵ_avg - μR) * (fR - fL)
+    # effective rates
     Γ_avg = (ΓL + ΓR) / 2.
     γ = sqrt(ΓL * ΓR / Γ_avg^2) # Adimensional constant
 
     numerator = 2 * Γ_avg * (γ * tc)^2
     denominator = 4 * tc^2 + (γ * Γ_avg)^2 + (γ * Δϵ)^2
-
-    return factor_L * numerator / denominator, factor_R * numerator / denominator
+    return factor * numerator / denominator
 end
