@@ -1,61 +1,85 @@
-using Plots
-using LaTeXStrings
-Plots.pythonplot()
+using CairoMakie, LaTeXStrings
 
-J_plot_L_gl = Plots.plot(
-    tc_range,
-    [J_num_L_gl, J_ana_L_gl, J_L_neqgf],
-    xlabel = L"t_c",
-    ylabel = L"J_L",
-    label = [L"J_L^{num}" L"J_L^{ana}" L"J_L^{neqgf}"],
-    linestyle = [:dash :solid :solid],
-    linealpha = [0.7, 0.3, 0.3],
-    color = [:green :green :black],
-    xaxis = :log,
-    legend = :left,
-    dpi = 250
-);
+# global approach plot
+begin
+    f = Figure(size = (900, 600))
+    ax = Axis(
+        f[1, 1];
+        xlabel = L"t_c",
+        ylabel = L"J_L",
+        title = L"\text{Heat current (global) vs } t_c",
+        xscale = log10
+    )
+    lines!(ax, tc_range, J_num_L_gl; label=L"J_L^{num}", color=:green, linestyle=:solid, alpha=0.7)
+    lines!(ax, tc_range, J_ana_L_gl; label=L"J_L^{ana}", color=:green, linestyle=:dashdot, alpha=0.7)
+    lines!(ax, tc_range, J_L_neqgf; label=L"J_L^{ana}", color=:black, linestyle=:dash, alpha=0.7)
+    axislegend(ax, position=:lc)
+    if save_fig
+        save(joinpath(@__DIR__, "J_gl.png"), f)
+    else
+        display(f)
+    end
+end
 
-J_plot_L_loc = Plots.plot(
-    tc_range,
-    [J_num_L_loc, J_ana_L_loc, J_L_neqgf],
-    xlabel = L"t_c",
-    ylabel = L"J_L",
-    label = [L"J_L^{num}" L"J_L^{ana}" L"J_L^{neqgf}"],
-    linestyle = [:dash :solid :solid],
-    linealpha = [0.7, 0.3, 0.3],
-    color = [:red :red :black],
-    xaxis = :log,
-    legend = :left,
-    dpi = 250
-);
+# local approach plot
+begin
+    f = Figure(size = (900, 600))
+    ax = Axis(
+        f[1, 1];
+        xlabel = L"t_c",
+        ylabel = L"J_L",
+        title = L"\text{Heat current (local) vs } t_c",
+        xscale = log10
+    )
+    lines!(ax, tc_range, J_num_L_loc; label=L"J_L^{num}", color=:red, linestyle=:solid, alpha=0.7)
+    lines!(ax, tc_range, J_ana_L_loc; label=L"J_L^{ana}", color=:red, linestyle=:dashdot, alpha=0.7)
+    lines!(ax, tc_range, J_L_neqgf; label=L"J_L^{ana}", color=:black, linestyle=:dash, alpha=0.7)
+    axislegend(ax, position=:lc)
+    if save_fig
+        save(joinpath(@__DIR__, "J_loc.png"), f)
+    else
+        display(f)
+    end
+end
 
-J_plot_L = Plots.plot(
-    tc_range,
-    [J_num_L_gl, J_num_L_loc, J_L_neqgf],
-    xlabel = L"t_c",
-    ylabel = L"J",
-    label = [L"J^{gl}_{L}" L"J^{loc}_{L}" L"J^{neqgf}_{L}"],
-    linestyle = [:dash :dash :solid],
-    linealpha = [0.7, 0.7, 0.3],
-    color = [:green :red :black],
-    xaxis = :log,
-    legend = :left,
-    dpi = 250
-);
+# local and global approaches (left)
+begin
+    f = Figure(size = (900, 600))
+    ax = Axis(
+        f[1, 1];
+        xlabel = L"t_c",
+        ylabel = L"J_L",
+        title = L"\text{Heat current (left) vs } t_c",
+        xscale = log10
+    )
+    lines!(ax, tc_range, J_num_L_gl; label=L"J_L^{num}", color=:green, linestyle=:solid, alpha=0.7)
+    lines!(ax, tc_range, J_num_L_loc; label=L"J_L^{num}", color=:red, linestyle=:solid, alpha=0.7)
+    lines!(ax, tc_range, J_L_neqgf; label=L"J_L^{ana}", color=:black, linestyle=:dash, alpha=0.7)
+    axislegend(ax, position=:lc)
+    if save_fig
+        save(joinpath(@__DIR__, "J_L_gl_loc.png"), f)
+    else
+        display(f)
+    end
+end
 
-J_plot_R = Plots.plot(
-    tc_range,
-    [J_num_R_gl, J_num_R_loc, J_R_neqgf],
-    xlabel = L"t_c",
-    ylabel = L"J",
-    label = [L"J^{gl}_{R}" L"J^{loc}_{R}" L"J^{neqgf}_{R}"],
-    linestyle = [:dash :dash :solid],
-    linealpha = [0.7, 0.7, 0.3],
-    color = [:green :red :black],
-    xaxis = :log,
-    legend = :left,
-    dpi = 250
-);
-
-plot(J_plot_L, J_plot_R, layout = (1, 2))
+# local and global approaches (right)
+begin
+    f = Figure(size = (900, 600))
+    ax = Axis(
+        f[1, 1];
+        xlabel = L"t_c",
+        ylabel = L"J_L",
+        title = L"\text{Heat current (right) vs } t_c",
+        xscale = log10
+    )
+    lines!(ax, tc_range, J_num_R_gl; label=L"J_R^{num}", color=:green, linestyle=:solid, alpha=0.7)
+    lines!(ax, tc_range, J_num_R_loc; label=L"J_R^{num}", color=:red, linestyle=:solid, alpha=0.7)
+    lines!(ax, tc_range, J_R_neqgf; label=L"J_R^{ana}", color=:black, linestyle=:dash, alpha=0.7)
+    axislegend(ax, position=:lc)
+    if save_fig
+        save(joinpath(@__DIR__, "J_R_gl_loc.png"), f)
+    else
+        display(f)
+    end
+end
