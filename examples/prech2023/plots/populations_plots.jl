@@ -1,33 +1,47 @@
-using Plots
-using LaTeXStrings
-Plots.pythonplot()
+using CairoMakie, LaTeXStrings
 
-n_dqd_plot_ge = Plots.plot(
-	tc_range,
-	[n_dqd_num_g_gl, n_dqd_ana_g_gl, n_dqd_num_e_gl, n_dqd_ana_e_gl, α_ge_num_gl, α_ge_ana_gl],
-	xlabel = L"t_c",
-	ylabel = L"\left< d_\sigma^\dagger d_\sigma' \right>",
-	label = [L"\bar{n}_g^{num}" L"\bar{n}_g^{ana}" L"\bar{n}_e^{num}" L"\bar{n}_e^{ana}" L"|α_{ge}^{num}|" L"|α_{ge}^{ana}|"],
-	linestyle = [:dash :solid :dash :solid :dash :solid],
-	linealpha = [0.7, 0.3, .7, 0.3, .7, 0.3],
-	color = [:blue :blue :green :green :red :red],
-	xaxis = :log,
-	legend = :topleft,
-	dpi = 200
-);
+begin
+    f = Figure(size = (900, 600))
+    ax = Axis(
+        f[1, 1];
+        xlabel = L"t_c",
+        ylabel = L"\left< d_\sigma^\dagger d_\sigma' \right>",
+        title = L"\text{DQD populations (global) vs } t_c",
+        xscale = log10
+    )
+	lines!(ax, tc_range, n_dqd_num_g_gl; label=L"\bar{n}_g^{num}", color=:blue, linestyle=:solid, alpha=0.7)
+	lines!(ax, tc_range, n_dqd_ana_g_gl; label=L"\bar{n}_g^{ana}", color=:blue, linestyle=:dash, alpha=0.7)
+	lines!(ax, tc_range, n_dqd_num_e_gl; label=L"\bar{n}_e^{num}", color=:red, linestyle=:solid, alpha=0.7)
+	lines!(ax, tc_range, n_dqd_ana_e_gl; label=L"\bar{n}_e^{ana}", color=:red, linestyle=:dash, alpha=0.7)
+	lines!(ax, tc_range, α_ge_num_gl; label=L"|α_{ge}^{num}|", color=:purple, linestyle=:solid, alpha=0.7)
+	lines!(ax, tc_range, α_ge_ana_gl; label=L"|α_{ge}^{ana}|", color=:purple, linestyle=:dash, alpha=0.7)
+	axislegend(ax, position=:lt)
+    if save_fig
+        save(joinpath(@__DIR__, "pop_ge_gl.png"), f)
+    else
+        display(f)
+    end
+end
 
-n_dqd_plot_LR = Plots.plot(
-	tc_range,
-	[n_dqd_num_L_gl, n_dqd_ana_L_gl, n_dqd_num_R_gl, n_dqd_ana_R_gl, α_LR_ss_num, α_LR_ss_ana],
-	xlabel = L"t_c",
-	ylabel = L"\left< d_\alpha^\dagger d_\alpha \right>",
-	label = [L"\bar{n}_L^{num}" L"\bar{n}_L^{ana}" L"\bar{n}_R^{num}" L"\bar{n}_R^{ana}" L"|α_{LR}^{num}|" L"|α_{LR}^{ana}|"],
-	linestyle = [:dash :solid :dash :solid :dash :solid],
-	linealpha = [0.7, 0.3, .7, 0.3, .7, 0.3],
-	color = [:blue :blue :green :green :red :red],
-	xaxis = :log,
-	legend = :left,
-    dpi = 350
-);
-
-plot(n_dqd_plot_ge, n_dqd_plot_LR, layout = (1, 2))
+begin
+    f = Figure(size = (900, 600))
+    ax = Axis(
+        f[1, 1];
+        xlabel = L"t_c",
+        ylabel = L"\left< d_l^\dagger d_l' \right>",
+        title = L"\text{DQD populations (global) vs } t_c",
+        xscale = log10
+    )
+	lines!(ax, tc_range, n_dqd_num_L_gl; label=L"\bar{n}_L^{num}", color=:blue, linestyle=:solid, alpha=0.7)
+	lines!(ax, tc_range, n_dqd_ana_L_gl; label=L"\bar{n}_L^{ana}", color=:blue, linestyle=:dash, alpha=0.7)
+	lines!(ax, tc_range, n_dqd_num_R_gl; label=L"\bar{n}_R^{num}", color=:red, linestyle=:solid, alpha=0.7)
+	lines!(ax, tc_range, n_dqd_ana_R_gl; label=L"\bar{n}_R^{ana}", color=:red, linestyle=:dash, alpha=0.7)
+	lines!(ax, tc_range, α_LR_num_gl; label=L"|α_{LR}^{num}|", color=:purple, linestyle=:solid, alpha=0.7)
+	lines!(ax, tc_range, α_LR_ana_gl; label=L"|α_{LR}^{ana}|", color=:purple, linestyle=:dash, alpha=0.7)
+	axislegend(ax, position=:lc)
+    if save_fig
+        save(joinpath(@__DIR__, "pop_LR_gl.png"), f)
+    else
+        display(f)
+    end
+end

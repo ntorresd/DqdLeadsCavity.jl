@@ -1,45 +1,64 @@
-using Plots
-using LaTeXStrings
-Plots.pythonplot()
+using CairoMakie, LaTeXStrings
 
-I_plot_gl = Plots.plot(
-    tc_range,
-    [I_L_num_gl, I_L_ana_gl, I_L_neqgf],
-    xlabel = L"t_c",
-    ylabel = L"I_L",
-    label = [L"I^{gl}_{num}" L"I^{gl}_{ana}" L"I^{NEGF}"],
-    linestyle = [:dash :solid :solid],
-    linealpha = [0.7, 0.5, 0.5],
-    color = [:green :green :black],
-    xaxis = :log,
-    legend = :topright,
-    dpi = 250
-);
+# global approach plot
+begin
+    f = Figure(size = (900, 600))
+    ax = Axis(
+        f[1, 1];
+        xlabel = L"t_c",
+        ylabel = L"I_L",
+        title = L"\text{Particle current (global) vs } t_c",
+        xscale = log10
+    )
+    lines!(ax, tc_range, I_L_num_gl; label=L"I_L^{gl,num}", color=:green, linestyle=:solid, alpha=0.7)
+    lines!(ax, tc_range, I_L_ana_gl; label=L"I_L^{gl,ana}", color=:green, linestyle=:dashdot, alpha=0.7)
+    lines!(ax, tc_range, I_L_neqgf; label=L"I_L^{ana}", color=:black, linestyle=:dash, alpha=0.7)
+    axislegend(ax, position=:lc)
+    if save_fig
+        save(joinpath(@__DIR__, "I_gl.png"), f)
+    else
+        display(f)
+    end
+end
 
-I_plot_loc = Plots.plot(
-    tc_range,
-    [I_L_ana_loc, I_L_num_loc, I_L_neqgf],
-    xlabel = L"t_c",
-    ylabel = L"I_L",
-    label = [L"I^{loc}_{ana}" L"I^{loc}_{num}" L"I^{NEGF}"],
-    linestyle = [:dash :solid :solid],
-    linealpha = [0.7, 0.5, 0.5],
-    color = [:green :green :black],
-    xaxis = :log,
-    legend = :topleft,
-    dpi = 250
-);
+# local approach plot
+begin
+    f = Figure(size = (900, 600))
+    ax = Axis(
+        f[1, 1];
+        xlabel = L"t_c",
+        ylabel = L"I_L",
+        title = L"\text{Particle current (local) vs } t_c",
+        xscale = log10
+    )
+    lines!(ax, tc_range, I_L_num_loc; label=L"I_L^{loc,num}", color=:red, linestyle=:solid, alpha=0.7)
+    lines!(ax, tc_range, I_L_ana_loc; label=L"I_L^{loc,ana}", color=:red, linestyle=:dashdot, alpha=0.7)
+    lines!(ax, tc_range, I_L_neqgf; label=L"I_L^{ana}", color=:black, linestyle=:dash, alpha=0.7)
+    axislegend(ax, position=:lc)
+    if save_fig
+        save(joinpath(@__DIR__, "I_loc.png"), f)
+    else
+        display(f)
+    end
+end
 
-I_plot = Plots.plot(
-    tc_range,
-    [I_L_num_gl, I_L_num_loc, I_L_neqgf],
-    xlabel = L"t_c",
-    ylabel = L"I",
-    label = [L"I^{gl}_{L}" L"I^{loc}_{L}" L"I^{NEGF}_{L}"],
-    linestyle = [:dash :dash :solid],
-    linealpha = [0.7, 0.7, 0.3],
-    color = [:green :red :black],
-    xaxis = :log,
-    legend = :left,
-    dpi = 250
-);
+# local and global approaches (left)
+begin
+    f = Figure(size = (900, 600))
+    ax = Axis(
+        f[1, 1];
+        xlabel = L"t_c",
+        ylabel = L"I_L",
+        title = L"\text{Particle current (left) vs } t_c",
+        xscale = log10
+    )
+    lines!(ax, tc_range, I_L_num_gl; label=L"I_L^{gl,num}", color=:green, linestyle=:solid, alpha=0.7)
+    lines!(ax, tc_range, I_L_num_loc; label=L"I_L^{loc,num}", color=:red, linestyle=:solid, alpha=0.7)
+    lines!(ax, tc_range, I_L_neqgf; label=L"I_L^{ana}", color=:black, linestyle=:dash, alpha=0.7)
+    axislegend(ax, position=:lc)
+    if save_fig
+        save(joinpath(@__DIR__, "I_L_gl_loc.png"), f)
+    else
+        display(f)
+    end
+end
