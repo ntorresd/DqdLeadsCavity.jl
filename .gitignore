@@ -2,4 +2,8 @@
 *.jl.cov
 *.jl.mem
 
+*.png
+*.jpg
+*.DS_Store
+
 .CondaPkg/
