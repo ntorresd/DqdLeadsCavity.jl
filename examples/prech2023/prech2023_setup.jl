@@ -1,8 +1,8 @@
 using Revise, DqdLeadsCavity
 
 run_plots = true
-N_points = 10000
-tc_range = logrange(0.01, 1e3, N_points);
+save_fig = false
+
 # Setup
 begin
 	# Leads
