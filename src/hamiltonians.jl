@@ -19,7 +19,22 @@ function build_H_dqd_LR(dqd::Dqd)
 
     return H
 end
+function build_H_dqd_LR(dqd_leads_cavity::DqdLeadsCavityObj)
+    # Parameters
+    dqd = dqd_leads_cavity.dqd_leads.dqd
+    ϵL, ϵR = get_onsite_energies(dqd)
 
+    # Operators
+    dL, dR = build_dqd_fermi_ops_LR(dqd_leads_cavity)
+
+    # Hamiltonian: on-site + tunneling
+    H = ϵL * dL' * dL + ϵR * dR' * dR + dqd.tc * (dL' * dR + dR' * dL)
+
+    # Add non-linear term for finite Coulomb interaction
+    H = dqd.blockade ? H : H + dqd.U * dL' * dL * dR' * dR
+
+    return H
+end
 
 @doc raw"""
 σz in the g-e parametrization

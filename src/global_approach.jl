@@ -115,16 +115,17 @@ end
 ## Steady state particle currents
 @doc raw"""
 Analytical steady-state particle current for the non-interacting DQD
-according to the global approach [eq. (A31) Prech2023]
+according to the global approach [eq. (A31) Prech2023].
+Due to particle conservation I_R = -I_L.
 """
-function get_particle_current_gl(dqd_leads::DqdLeads)
+function get_particle_current_gl(dqd_leads::DqdLeads; left::Bool = true)
 	ΓLg, ΓLe, ΓRg, ΓRe = get_coupling_strengths_gl(dqd_leads)
 	fLg, fLe, fRg, fRe = get_fermi_factors_gl(dqd_leads)
-
+	_side = left ? 1. : -1.
+	# particle currents
     I_L = (fLg - fRg) * ΓLg * ΓRg / (ΓLg + ΓRg) + (fLe - fRe) * ΓLe * ΓRe / (ΓLe + ΓRe)
-	I_R = (fRg - fLg) * ΓRg * ΓLg / (ΓRg + ΓLg) + (fRe - fLe) * ΓRe * ΓLe / (ΓRe + ΓLe)
-
-	return I_L, I_R
+	# I_R = (fRg - fLg) * ΓRg * ΓLg / (ΓRg + ΓLg) + (fRe - fLe) * ΓRe * ΓLe / (ΓRe + ΓLe)
+	return _side * I_L
 end
 
 ## Steady state heat currents
@@ -133,7 +134,7 @@ Analytical steady-state solution for the heat current
 according to the global approach [eq. (A33) Prech2023] or
 [eq. (B.8) Potts2021]
 """
-function get_heat_current_gl(dqd_leads::DqdLeads)
+function get_heat_current_gl(dqd_leads::DqdLeads; left::Bool = true)
 	ΓLg, ΓLe, ΓRg, ΓRe = get_coupling_strengths_gl(dqd_leads)
 	fLg, fLe, fRg, fRe = get_fermi_factors_gl(dqd_leads)
 	ϵg, ϵe = get_eigen_energies(dqd_leads.dqd)
@@ -142,11 +143,7 @@ function get_heat_current_gl(dqd_leads::DqdLeads)
 	Γg = ΓLg * ΓRg / (ΓLg + ΓRg)
 	Γe = ΓLe * ΓRe / (ΓLe + ΓRe)
 
-	JLg = (ϵg - μL) * (fLg - fRg) * Γg
-	JLe = (ϵe - μL) * (fLe - fRe) * Γe
-
-	JRg = (ϵg - μR) * (fRg - fLg) * Γg
-	JRe = (ϵe - μR) * (fRe - fLe) * Γe
-
-	return JLg + JLe, JRg + JRe
+	Jg = left ? (ϵg - μL) * (fLg - fRg) * Γg : (ϵg - μR) * (fRg - fLg) * Γg
+	Je = left ? (ϵe - μL) * (fLe - fRe) * Γe : (ϵe - μR) * (fRe - fLe) * Γe
+	return Jg + Je
 end
