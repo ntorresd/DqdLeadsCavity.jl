@@ -10,10 +10,10 @@ begin
         xscale = log10,
     )
     lines!(ax, Ndot_range, J_num_L_drive; color=:blue, linestyle=:dash, alpha=0.7, label=L"J_L^{num}")
-    lines!(ax, Ndot_range, J_num_R_drive; color=:red,  linestyle=:dash, alpha=0.7, label=L"J_R^{num}")
+    lines!(ax, Ndot_range, J_num_R_drive; color=:red, linestyle=:dash, alpha=0.7, label=L"J_R^{num}")
     lines!(ax, Ndot_range, J_ana_L_nd; color=:blue, linestyle=:solid, alpha=0.5, label=L"J_L^{ana, nd}")
     # lines!(ax, Ndot_range, J_ana_L_ld;    color=:blue, linestyle=:solid, alpha=0.5, label=L"J_L^{ana, ld}")
-    axislegend(ax, position=:lt) # left/“lt” similar to :left in Plots
+    axislegend(ax, position=:lc)
     if save_fig
         save(joinpath(@__DIR__, "J_drive.png"), f)
     else

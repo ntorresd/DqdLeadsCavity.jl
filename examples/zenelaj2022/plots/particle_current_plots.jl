@@ -14,7 +14,7 @@ begin
     lines!(ax, Ndot_range, I_L_ld_ana; color=:black, linestyle=:dash, alpha=0.7, label=L"I_L^{ana, ld}")
     axislegend(ax, position=:lc)
     if save_fig
-        save(joinpath(@__DIR__, "I_L_driven.png"))
+        save(joinpath(@__DIR__, "I_L_driven.png"), f)
     else
         display(f)
     end
