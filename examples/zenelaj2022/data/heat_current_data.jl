@@ -8,7 +8,8 @@ begin
     local ϵ_avg = dqdObj.dqd_leads.dqd.ϵ_avg;
     local μL, μR = get_chemical_potentials(dqdObj.dqd_leads);
     # analytical heat currents without the cavity
-    J_ana_L_nd, J_ana_R_nd = get_heat_current_gl(dqdObj.dqd_leads) .|> x -> [x];
+    J_ana_L_nd = [get_heat_current_gl(dqdObj.dqd_leads; left = true)]
+    J_ana_R_nd = [get_heat_current_gl(dqdObj.dqd_leads; left = false)]
     # analytical heat current in the large-drive limit
     # TODO: find the right expression for this
     J_ana_L_ld = [get_heat_current_ld(dqdObj)]
