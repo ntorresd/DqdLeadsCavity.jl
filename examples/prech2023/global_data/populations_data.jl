@@ -35,6 +35,7 @@ begin
 end
 
 begin
+	local dqdObj = deepcopy(dqd_leads)
 	# left dot steady-state occupation
 	n_dqd_num_L_gl = []
 	n_dqd_ana_L_gl = []
