@@ -25,6 +25,11 @@ end
 function Dqd(Δϵ::Real, ϵ_avg::Real, tc::Real, γm::Real, γϕ::Real)
     return Dqd(Δϵ, ϵ_avg, tc, γm::Real, γϕ::Real, Inf, true)
 end
+# Non-interacting or Coulomb blockade constructor
+function Dqd(Δϵ::Real, ϵ_avg::Real, tc::Real, γm::Real, γϕ::Real, blockade::Bool)
+    U = blockade ? Inf : 0.0
+    return Dqd(Δϵ, ϵ_avg, tc, γm::Real, γϕ::Real, U, blockade)
+end
 
 function Base.show(io::IO, dqd::Dqd)
     ϵL, ϵR = get_onsite_energies(dqd)
