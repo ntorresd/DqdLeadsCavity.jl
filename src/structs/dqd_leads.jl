@@ -93,12 +93,3 @@ function get_transition_rates_ge(dqd_leads::DqdLeads; side::Any = false)
     # ΓLg, ΓLe, ΓRg, ΓRe (eq (89) [Potts et. al. 2021])
     # return ΓL * sθ2, ΓL * cθ2, ΓR * sθ2, ΓR * sθ2 
 end
-
-function get_fermi_ge(dqd_leads::DqdLeads)
-    ϵg, ϵe = get_eigen_energies(dqd_leads.dqd)
-    μL, μR = get_chemical_potentials(dqd_leads)
-    TL, TR = dqd_leads.leads.TL, dqd_leads.leads.TR
-
-    # fLg, fLe, fRg, fRe
-    return fermi(ϵg, μL, TL), fermi(ϵe, μL, TL), fermi(ϵg, μR, TR), fermi(ϵe, μR, TR)
-end

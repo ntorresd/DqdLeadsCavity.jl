@@ -1,6 +1,7 @@
 export get_particle_current_num
 export get_heat_current_num
 export current_output # not tested
+export get_populations_LR_num, get_coherence_LR_num, get_concurrence_LR_num
 
 @doc raw"""
 Numerical particle current calculation
@@ -113,4 +114,59 @@ function current_output(
     else
         error("Expected a real current, but got some complex value with nonzero imaginary part: $(I_avg)")
     end
+end
+
+
+function get_fermi_ge(dqd_leads::DqdLeads)
+    ϵg, ϵe = get_eigen_energies(dqd_leads.dqd)
+    μL, μR = get_chemical_potentials(dqd_leads)
+    TL, TR = dqd_leads.leads.TL, dqd_leads.leads.TR
+
+    # fLg, fLe, fRg, fRe
+    return fermi(ϵg, μL, TL), fermi(ϵe, μL, TL), fermi(ϵg, μR, TR), fermi(ϵe, μR, TR)
+end
+
+@doc raw"""
+Numerical populations of the DQD in the left-right basis
+"""
+function get_populations_LR_num(
+	dqd_leads::DqdLeads,
+	ρ::QuantumObject{Operator}
+)
+	ket_0, ket_L, ket_R, ket_D = build_dqd_basis_LR(dqd_leads.dqd)
+	
+	p0 = abs(ket_0' * ρ * ket_0)
+	pL = abs(ket_L' * ρ * ket_L)
+	pR = abs(ket_R' * ρ * ket_R)
+	pd = abs(ket_D' * ρ * ket_D)
+
+	return p0, pL, pR, pd
+end
+
+@doc raw"""
+Numerical coherence between left-right states of the DQD
+"""
+function get_coherence_LR_num(
+	dqd_leads::DqdLeads,
+	ρ::QuantumObject{Operator}
+)
+	ket_0, ket_L, ket_R, ket_D = build_dqd_basis_LR(dqd_leads.dqd)
+	α = abs(ket_L' * ρ * ket_R)
+
+	return α
+
+end
+
+@doc raw"""
+Numerical concurrence in the 
+"""
+function get_concurrence_LR_num(
+	dqd_leads::DqdLeads,
+	ρ::QuantumObject{Operator}
+)
+	p0, pL, pR, pd = get_populations_LR_num(dqd_leads, ρ)
+	α = get_coherence_LR_num(dqd_leads, ρ)
+	C = 2 * max(0, α - sqrt(p0 * pd))
+
+	return C
 end
