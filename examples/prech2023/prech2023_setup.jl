@@ -1,4 +1,5 @@
 using Revise, DqdLeadsCavity
+using QuantumToolbox
 
 run_plots = true
 save_fig = false
@@ -8,15 +9,18 @@ begin
 	# Leads
 	local Γ = 1.
 	local T = 100. * Γ
-	local Δμ = 6.5 * T
+	# local Δμ = 6.5 * T
+	local Δμ = 1e3
 	local μ_avg = 0.0
 
 	leads = Leads(T, T, Δμ, μ_avg)
 
 	# DQD parameters
-	local Δϵ = 0. * Γ
+	# local Δϵ = 0. * Γ
+	local Δϵ = 131.29 # Max concurrence for eV=650
 	local ϵ_avg = 0.0
-	local tc = 0.0
+	# local tc = 0.0
+	local tc = T / 2.
 	local U = 0.0
 	
 	local γm = 0.			# Relaxation rate
