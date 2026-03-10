@@ -14,8 +14,8 @@ begin
     # TODO: find the right expression for this
     J_ana_L_ld = [get_heat_current_ld(dqdObj)]
     # numerical heat currents with the cavity
-    J_num_L_drive = [];
-    J_num_R_drive = [];
+    JL_num_drive = [];
+    JR_num_drive = [];
     for Ndot in Ndot_range
         dqdObj.cavity.Ndot = Ndot;
         local ρss = steadystate(
@@ -27,12 +27,12 @@ begin
         local N_op = dL' * dL + dR' * dR;
         local L_ops = build_L_ops_dqd_gl(dqdObj);
         local H_td = build_H_dqd_LR(dqdObj);
-        local DLρ = D_sop(L_ops[1], ρss) + D_sop(L_ops[2], ρss) +
-                    D_sop(L_ops[3], ρss) + D_sop(L_ops[4], ρss);
-        local DRρ = D_sop(L_ops[5], ρss) + D_sop(L_ops[6], ρss) +
-                    D_sop(L_ops[7], ρss) + D_sop(L_ops[8], ρss);
+        local DLρ = D_sop(L_ops[1]) * ρss + D_sop(L_ops[2]) * ρss +
+                    D_sop(L_ops[3]) * ρss + D_sop(L_ops[4]) * ρss;
+        local DRρ = D_sop(L_ops[5]) * ρss + D_sop(L_ops[6]) * ρss +
+                    D_sop(L_ops[7]) * ρss + D_sop(L_ops[8]) * ρss;
 
-        push!(J_num_L_drive, real(expect(H_td - μL * N_op, DLρ)));
-        push!(J_num_R_drive, real(expect(H_td - μR * N_op, DRρ)));
+        push!(JL_num_drive, real(expect(H_td - μL * N_op, DLρ)));
+        push!(JR_num_drive, real(expect(H_td - μR * N_op, DRρ)));
     end
 end

@@ -1,6 +1,6 @@
 export get_fermi_factors_gl, get_coupling_strengths_gl
 export build_L_ops_dqd_gl
-export get_occupation_ge_gl, get_occupation_LR_gl, get_coherence_LR_gl
+export get_occupation_ge_gl_ana, get_occupation_LR_gl, get_coherence_LR_gl
 export get_particle_current_gl
 export get_heat_current_gl
 
@@ -59,10 +59,10 @@ function build_L_ops_dqd_gl(dqd_leads_cavity::DqdLeadsCavityObj)
 	dg, de = build_dqd_fermi_ops_ge(dqd_leads_cavity)
 	
 	L_ops = [
-		sqrt(ΓLg * fLg) * dg', sqrt(ΓLg * (1. - fLg)) * dg,
-		sqrt(ΓLe * fLe) * de', sqrt(ΓLe * (1. - fLe)) * de,
-		sqrt(ΓRg * fRg) * dg', sqrt(ΓRg * (1. - fRg)) * dg,
-		sqrt(ΓRe * fRe) * de', sqrt(ΓRe * (1. - fRe)) * de,
+		sqrt(ΓLg * fLg) * dg', sqrt(ΓLg * (1. - fLg)) * dg, # L: |0> -> |g>, |g> -> |0>
+		sqrt(ΓLe * fLe) * de', sqrt(ΓLe * (1. - fLe)) * de, # L: |0> -> |e>, |e> -> |0>
+		sqrt(ΓRg * fRg) * dg', sqrt(ΓRg * (1. - fRg)) * dg, # R: |0> -> |g>, |g> -> |0>
+		sqrt(ΓRe * fRe) * de', sqrt(ΓRe * (1. - fRe)) * de, # R: |0> -> |e>, |e> -> |0>
 	]
 	return L_ops
 end
@@ -73,7 +73,7 @@ end
 Analytical steady-state solution for the occupation of the DQD grond/excited state
 according to the global approach[eq. (A27) Prech2023]
 """
-function get_occupation_ge_gl(dqd_leads::DqdLeads)
+function get_occupation_ge_gl_ana(dqd_leads::DqdLeads)
 	ΓLg, ΓLe, ΓRg, ΓRe = get_coupling_strengths_gl(dqd_leads)
 	fLg, fLe, fRg, fRe = get_fermi_factors_gl(dqd_leads)
 
@@ -93,7 +93,7 @@ function get_occupation_LR_gl(dqd_leads::DqdLeads)
 	θ = get_θ(dqd_leads.dqd)
 	cθ2, sθ2 = cos(θ / 2.)^2, sin(θ / 2.)^2
 	
-	ng, ne = get_occupation_ge_gl(dqd_leads)
+	ng, ne = get_occupation_ge_gl_ana(dqd_leads)
 	
 	nL = cθ2 * ng + sθ2 * ne
 	nR = sθ2 * ng + cθ2 * ne
@@ -106,7 +106,7 @@ Analytical steady-state solution for the coherence between the ground and excite
 """
 function get_coherence_LR_gl(dqd_leads::DqdLeads)
 	θ = get_θ(dqd_leads.dqd)
-	ng, ne = get_occupation_ge_gl(dqd_leads)
+	ng, ne = get_occupation_ge_gl_ana(dqd_leads)
 	α_abs = abs(sin(θ/2.) * cos(θ/2.) * (ng - ne))
 	return(α_abs)
 end

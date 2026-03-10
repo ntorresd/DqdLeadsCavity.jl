@@ -18,8 +18,11 @@ end
 @doc raw"""
 Lindblad dissipator superoperator
 """
-function D_sop(x::QuantumObject{Operator}, ρ::QuantumObject{Operator})
-    return x * ρ * x' - 1 / 2 * x' * x * ρ - 1 / 2 * ρ * x' * x
+function D_sop(
+    L_op::QuantumObject{Operator};
+    Id = I(prod(L_op.dimensions))
+)
+    return sprepost(L_op, L_op') - 0.5 * (spre(L_op' * L_op, Id) + spost(L_op' * L_op, Id))
 end
 
 @doc raw"""

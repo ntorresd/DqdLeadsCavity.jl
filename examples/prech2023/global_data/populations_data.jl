@@ -23,7 +23,7 @@ begin
 		local dg, de = build_dqd_fermi_ops_ge(dqdObj.dqd)
 		local ng, ne = dg' * dg, de' * de
 
-		local ng_ana, ne_ana = get_occupation_ge_gl(dqdObj)
+		local ng_ana, ne_ana = get_occupation_ge_gl_ana(dqdObj)
 
 		push!(n_dqd_num_g_gl, real(expect(ng, ρss)))
 		push!(n_dqd_ana_g_gl, ng_ana)
@@ -35,6 +35,7 @@ begin
 end
 
 begin
+	local dqdObj = deepcopy(dqd_leads)
 	# left dot steady-state occupation
 	n_dqd_num_L_gl = []
 	n_dqd_ana_L_gl = []

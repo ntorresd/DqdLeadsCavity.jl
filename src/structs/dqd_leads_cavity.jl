@@ -146,7 +146,7 @@ function build_dqd_fermi_ops_ge(dqd::Dqd)
     dg = cos(θ / 2.) * dL - sin(θ / 2.) * dR
     de = sin(θ / 2.) * dL + cos(θ / 2.) * dR
     # [eq. (84) Potts2021] - This seems to have swaped g and e
-    # dg = -sin(θ / 2.) * dL - cos(θ / 2.) * dR
+    # dg = -sin(θ / 2.) * dL + cos(θ / 2.) * dR
     # de = cos(θ / 2.) * dL + sin(θ / 2.) * dR
     return dg, de
 end

@@ -16,7 +16,7 @@ function get_particle_current_num(
     # compute the particle current
     I = 0.0
     for L_op in L_ops
-        I += expect(N_op, D_sop(L_op, ρ))
+        I += expect(N_op, D_sop(L_op) * ρ)
     end
     # check whether the current is real
     return _is_real(I)
@@ -32,7 +32,7 @@ function get_particle_current_num(
     # compute the particle current
     I = 0.0
     for L_op in L_ops
-        I += expect(N_op, D_sop(L_op, ρ))
+        I += expect(N_op, D_sop(L_op) * ρ)
     end
     # check whether the current is real
     return _is_real(I)
@@ -57,7 +57,7 @@ function get_heat_current_num(
     # compute the heat current
     J = 0.0
     for L_op in L_ops
-        J += expect(H_td - μ * N_op, D_sop(L_op, ρ))
+        J += expect(H_td - μ * N_op, D_sop(L_op) * ρ)
     end
     # check whether the current is real
     return _is_real(J)
@@ -78,7 +78,7 @@ function get_heat_current_num(
     # compute the heat current
     J = 0.0
     for L_op in L_ops
-        J += expect(H_td - μ * N_op, D_sop(L_op, ρ))
+        J += expect(H_td - μ * N_op, D_sop(L_op) * ρ)
     end
     # check whether the current is real
     return _is_real(J)
