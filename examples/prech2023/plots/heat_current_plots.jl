@@ -10,9 +10,9 @@ begin
         title = L"\text{Heat current (global) vs } t_c",
         xscale = log10
     )
-    lines!(ax, tc_range, J_num_L_gl; label=L"J_L^{num}", color=:green, linestyle=:solid, alpha=0.7)
-    lines!(ax, tc_range, J_ana_L_gl; label=L"J_L^{ana}", color=:green, linestyle=:dashdot, alpha=0.7)
-    lines!(ax, tc_range, J_L_neqgf; label=L"J_L^{ana}", color=:black, linestyle=:dash, alpha=0.7)
+    lines!(ax, tc_range, JL_num_gl; label=L"J_L^{num}", color=:green, linestyle=:solid, alpha=0.7)
+    lines!(ax, tc_range, JL_ana_gl; label=L"J_L^{ana}", color=:green, linestyle=:dashdot, alpha=0.7)
+    lines!(ax, tc_range, JL_neqgf; label=L"J_L^{ana}", color=:black, linestyle=:dash, alpha=0.7)
     axislegend(ax, position=:lc)
     if save_fig
         save(joinpath(@__DIR__, "J_gl.png"), f)
@@ -31,9 +31,9 @@ begin
         title = L"\text{Heat current (local) vs } t_c",
         xscale = log10
     )
-    lines!(ax, tc_range, J_num_L_loc; label=L"J_L^{num}", color=:red, linestyle=:solid, alpha=0.7)
-    lines!(ax, tc_range, J_ana_L_loc; label=L"J_L^{ana}", color=:red, linestyle=:dashdot, alpha=0.7)
-    lines!(ax, tc_range, J_L_neqgf; label=L"J_L^{ana}", color=:black, linestyle=:dash, alpha=0.7)
+    lines!(ax, tc_range, JL_num_loc; label=L"J_L^{num}", color=:red, linestyle=:solid, alpha=0.7)
+    lines!(ax, tc_range, JL_ana_loc; label=L"J_L^{ana}", color=:red, linestyle=:dashdot, alpha=0.7)
+    lines!(ax, tc_range, JL_neqgf; label=L"J_L^{ana}", color=:black, linestyle=:dash, alpha=0.7)
     axislegend(ax, position=:lc)
     if save_fig
         save(joinpath(@__DIR__, "J_loc.png"), f)
@@ -52,12 +52,12 @@ begin
         title = L"\text{Heat current (left) vs } t_c",
         xscale = log10
     )
-    lines!(ax, tc_range, J_num_L_gl; label=L"J_L^{num}", color=:green, linestyle=:solid, alpha=0.7)
-    lines!(ax, tc_range, J_num_L_loc; label=L"J_L^{num}", color=:red, linestyle=:solid, alpha=0.7)
-    lines!(ax, tc_range, J_L_neqgf; label=L"J_L^{ana}", color=:black, linestyle=:dash, alpha=0.7)
+    lines!(ax, tc_range, JL_num_gl; label=L"J_L^{num}", color=:green, linestyle=:solid, alpha=0.7)
+    lines!(ax, tc_range, JL_num_loc; label=L"J_L^{num}", color=:red, linestyle=:solid, alpha=0.7)
+    lines!(ax, tc_range, JL_neqgf; label=L"J_L^{ana}", color=:black, linestyle=:dash, alpha=0.7)
     axislegend(ax, position=:lc)
     if save_fig
-        save(joinpath(@__DIR__, "J_L_gl_loc.png"), f)
+        save(joinpath(@__DIR__, "JL_gl_loc.png"), f)
     else
         display(f)
     end
@@ -78,7 +78,7 @@ begin
     lines!(ax, tc_range, J_R_neqgf; label=L"J_R^{ana}", color=:black, linestyle=:dash, alpha=0.7)
     axislegend(ax, position=:lc)
     if save_fig
-        save(joinpath(@__DIR__, "J_R_gl_loc.png"), f)
+        save(joinpath(@__DIR__, "JR_gl_loc.png"), f)
     else
         display(f)
     end

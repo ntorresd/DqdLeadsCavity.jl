@@ -6,9 +6,9 @@ tc_range = logrange(0.01, 1e3, N_points);
 begin
 	dqdObj = deepcopy(dqd_leads)
 
-    J_ana_L_loc = []
+    JL_ana_loc = []
     J_ana_R_loc = []
-    J_num_L_loc = []
+    JL_num_loc = []
     J_num_R_loc = []
     for tc in tc_range
         # parameters
@@ -22,11 +22,11 @@ begin
         local dL, dR = build_dqd_fermi_ops_LR(dqdObj.dqd)
         local H_td = ϵ_avg * (dL' * dL + dR' * dR)
         # analytical heat currents
-        push!(J_ana_L_loc, get_heat_current_loc(dqdObj; left = true))
+        push!(JL_ana_loc, get_heat_current_loc(dqdObj; left = true))
         push!(J_ana_R_loc, get_heat_current_loc(dqdObj; left = false))
         # numerical heat currents
         push!(
-            J_num_L_loc,
+            JL_num_loc,
             get_heat_current_num(dqdObj, ρss, L_ops[1:2], H_td; left = true)
         )
         push!(
