@@ -3,6 +3,7 @@ export build_L_ops_dqd_gl
 export get_occupation_ge_gl_ana, get_occupation_LR_gl, get_coherence_LR_gl
 export get_particle_current_gl
 export get_heat_current_gl
+export get_coherence_gl_ana, get_concurrence_gl_ana
 
 @doc raw"""
 Fermi factors for the global approach [Potts2021]
@@ -146,4 +147,27 @@ function get_heat_current_gl(dqd_leads::DqdLeads; left::Bool = true)
 	Jg = left ? (ϵg - μL) * (fLg - fRg) * Γg : (ϵg - μR) * (fRg - fLg) * Γg
 	Je = left ? (ϵe - μL) * (fLe - fRe) * Γe : (ϵe - μR) * (fRe - fLe) * Γe
 	return Jg + Je
+end
+
+@doc raw"""
+Analytical coherence for the global approach according to [eq. (A.29) Prech2023]
+"""
+function get_coherence_gl_ana(dqd_leads::DqdLeads)
+    tc = dqd_leads.dqd.tc
+    Ω = get_Ω(dqd_leads.dqd)
+    ng, ne = get_occupation_ge_gl_ana(dqd_leads)
+
+    α = (tc / Ω) * abs(ne - ng)
+    return α
+end
+
+@doc raw"""
+Analytical concurrence for the global approach according to [eq. (A.30) Prech2023]
+"""
+function get_concurrence_gl_ana(dqd_leads::DqdLeads)
+    ng, ne = get_occupation_ge_gl_ana(dqd_leads)
+    α = get_coherence_gl_ana(dqd_leads)
+
+    C = max(0., 2. * α - 2 * sqrt(ng * ne * (1. - ng) * (1. - ne)))
+    return C
 end
