@@ -1,5 +1,5 @@
 export get_fermi_factors_gl, get_coupling_strengths_gl
-export build_L_ops_dqd_gl
+export build_L_ops_dqd_gl, build_L_ops_dqd_gl_int
 export get_occupation_ge_gl_ana, get_occupation_LR_gl, get_coherence_LR_gl
 export get_particle_current_gl
 export get_heat_current_gl
@@ -8,13 +8,13 @@ export get_coherence_gl_ana, get_concurrence_gl_ana
 @doc raw"""
 Fermi factors for the global approach [Potts2021]
 """
-function get_fermi_factors_gl(dqd_leads::DqdLeads)
+function get_fermi_factors_gl(dqd_leads::DqdLeads; U::Real = 0.0)
 	ϵg, ϵe = get_eigen_energies(dqd_leads.dqd)
 	μL, μR = get_chemical_potentials(dqd_leads)
 	TL, TR = dqd_leads.leads.TL, dqd_leads.leads.TR
 
-	fLg, fLe = fermi(ϵg, μL, TL), fermi(ϵe, μL, TL)
-	fRg, fRe = fermi(ϵg, μR, TR), fermi(ϵe, μR, TR)
+	fLg, fLe = fermi(ϵg + U, μL, TL), fermi(ϵe + U, μL, TL)
+	fRg, fRe = fermi(ϵg + U, μR, TR), fermi(ϵe + U, μR, TR)
 
 	return fLg, fLe, fRg, fRe
 end
@@ -66,6 +66,54 @@ function build_L_ops_dqd_gl(dqd_leads_cavity::DqdLeadsCavityObj)
 		sqrt(ΓRe * fRe) * de', sqrt(ΓRe * (1. - fRe)) * de, # R: |0> -> |e>, |e> -> |0>
 	]
 	return L_ops
+end
+
+@doc raw"""
+Lindblad dissipator for the global approach according to [eq. (118) Potts2021].
+This is valid for the interacting DQD case (U ≠ 0) with equal onsite energies (ϵL = ϵR).
+"""
+function build_L_ops_dqd_gl_int(dqd_leads::DqdLeads)
+	if ((dqd_leads.dqd.Δϵ != 0) || (dqd_leads.dqd.blockade))
+		error("This method is only valid for ϵL = ϵR and finite U")
+	end
+	Ω = get_Ω(dqd_leads.dqd)
+	γL, γR = dqd_leads.ΓL / 2., dqd_leads.ΓR / 2.
+	U = dqd_leads.dqd.U
+	if (
+		(Ω < γL) || (Ω < γR) || (Ω + U < γL) || (Ω + U < γR)
+	)
+		@warn "Condition |ωj - ωj'| >> Γα is not satisfied. This frequency grouping is not justified"
+		print(dqd_leads)
+	end
+
+	fLg, fLe, fRg, fRe = get_fermi_factors_gl(dqd_leads)
+	fLgU, fLeU, fRgU, fReU = get_fermi_factors_gl(dqd_leads; U = dqd_leads.dqd.U)
+
+	dg, de = build_dqd_fermi_ops_ge(dqd_leads.dqd)
+	id_dqd = build_id_dqd(dqd_leads.dqd)
+
+	L_ops_L = [
+		sqrt(γL * fLg) * (id_dqd - de' * de) * dg',
+		sqrt(γL * (1. - fLg)) * (id_dqd - de' * de) * dg,
+		sqrt(γL * fLgU) * de' * de * dg',
+		sqrt(γL * (1. - fLgU)) * de' * de * dg,
+		sqrt(γL * fLe) * (id_dqd - dg' * dg) * de',
+		sqrt(γL * (1. - fLe)) * (id_dqd - dg' * dg) * de,
+		sqrt(γL * fLeU) * dg' * dg * de',
+		sqrt(γL * (1. - fLeU)) * dg' * dg * de
+	]
+
+	L_ops_R = [
+		sqrt(γR * fRg) * (id_dqd - de' * de) * dg',
+		sqrt(γR * (1. - fRg)) * (id_dqd - de' * de) * dg,
+		sqrt(γR * fRgU) * de' * de * dg',
+		sqrt(γR * (1. - fRgU)) * de' * de * dg,
+		sqrt(γR * fRe) * (id_dqd - dg' * dg) * de',
+		sqrt(γR * (1. - fRe)) * (id_dqd - dg' * dg) * de,
+		sqrt(γR * fReU) * dg' * dg * de',
+		sqrt(γR * (1. - fReU)) * dg' * dg * de
+	]
+	return [L_ops_L; L_ops_R]
 end
 
 # Occupations and coherence

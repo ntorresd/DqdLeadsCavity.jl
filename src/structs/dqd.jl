@@ -96,8 +96,9 @@ end
 DQD Identity operator
 """
 function build_id_dqd(dqd::Dqd)
+    dims = dqd.blockade ? 3 : (2,2)
     dim = get_dim(dqd)
-    return qeye(dim)
+    return qeye(dim, dims = dims)
 end
 
 @doc raw"""
