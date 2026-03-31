@@ -17,8 +17,8 @@ begin
 	local γm = 0.0 		# Relaxation rate
 	local γϕ = 0.0 	# Dephasing rates
 
-	# dqd = Dqd(Δϵ, ϵ_avg, tc, γm, γϕ)
-	dqd = Dqd(0.0, ϵ_avg, tc, γm, γϕ, 0.0)
+	# dqd = Dqd(Δϵ, ϵ_avg, tc, γm, γϕ) 		# Coulomb-blockade
+	dqd = Dqd(0.0, ϵ_avg, tc, γm, γϕ, 0.0)	# Non-interacting 
 
 	# Leads
 	# local T = 1e-2 # don't erase
