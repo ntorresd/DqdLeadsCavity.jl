@@ -2,8 +2,6 @@
 # for different average DQD levels
 begin
     system = deepcopy(dqd_leads)
-    system.dqd.blockade = false
-    system.dqd.U = 0.0
 
     eV = system.leads.Δμ
     N_range = 1000
@@ -85,7 +83,8 @@ begin
     eV = system.leads.Δμ
     N_range = 1000
     # tc_range = range(-eV - 10., eV + 10., N_range)
-    tc_range = range(1e-4, 1.25 * eV, N_range)
+    # tc_range = range(1e-4, 1.25 * eV, N_range)
+    tc_range = range(1e-1, 250, N_range)
     T_avg_list = [1e-3, 1e1, 1e2/2., 1e2]
 
     # Figure template
